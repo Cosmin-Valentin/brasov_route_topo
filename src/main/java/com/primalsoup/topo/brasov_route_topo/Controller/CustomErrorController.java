@@ -27,8 +27,8 @@ public class CustomErrorController implements ErrorController {
 			model.addAttribute("errorMessage", errorMessage);
 		}
 		model.addAttribute("body", "page-error");
-		
-		return "page-layout";
+
+		return "main-layout";
 	}
 
 }
