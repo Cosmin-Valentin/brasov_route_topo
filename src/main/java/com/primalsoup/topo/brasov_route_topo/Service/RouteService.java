@@ -10,15 +10,15 @@ import com.primalsoup.topo.brasov_route_topo.Repository.RouteRepository;
 @Service
 public class RouteService {
 	private final RouteRepository routeRepository;
-	
+
 	public RouteService(RouteRepository routeRepository) {
 		this.routeRepository = routeRepository;
 	}
-	
+
 	public Collection<Route> getAllRoutes() {
 		return routeRepository.findAll();
 	}
-	
+
 	public void addRoute(Route route) {
 		routeRepository.save(route);
 	}
