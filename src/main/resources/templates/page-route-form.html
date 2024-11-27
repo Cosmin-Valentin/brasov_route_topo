@@ -9,6 +9,27 @@
 
 			<div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 				<div class="sm:col-span-4">
+					<label for="selector"
+						class="block text-sm/6 font-medium text-gray-900">Sector</label>
+					<div class="mt-2">
+						<select id="sector-select" th:field="*{sector}" onchange="toggleSectorInput(this)"
+							class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+							<option value="" th:text="'-- Alege sector --'"></option>
+							<option th:each="sector : ${sectors}" th:value="${sector.name}"
+								th:text="${sector.name}"></option>
+							<option value="new">-- Adauga sector nou --</option>
+						</select>
+					</div>
+				</div>
+				<div class="sm:col-span-4" id="new-sector-div" style="display: none;">
+					<label for="new-sector" class="block text-sm/6 font-medium text-gray-900">Nume sector nou</label>
+					<div class="mt-2">
+						<input type="text" name="new-sector" id="new-sector"
+							class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+							required placeholder="Adauga nume sector...">
+					</div>
+				</div>
+				<div class="sm:col-span-4">
 					<label for="name" class="block text-sm/6 font-medium text-gray-900">Numele
 						rutei</label>
 					<div class="mt-2">
@@ -24,26 +45,26 @@
 						class="block text-sm/6 font-medium text-gray-900">Dificultate
 						rutei</label>
 					<div class="mt-2">
-						<select id="difficulty" th:field="*{difficulty}" 
-		                    class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-		                    <option value="" disabled selected>Select Difficulty</option>
-		                    <option value="5a">5a</option>
-		                    <option value="5b">5b</option>
-		                    <option value="5c">5c</option>
-		                    <option value="6a">6a</option>
-		                    <option value="6a+">6a+</option>
-		                    <option value="6b">6b</option>
-		                    <option value="6b+">6b+</option>
-		                    <option value="6c">6c</option>
-		                    <option value="6c+">6c+</option>
-		                    <option value="7a">7a</option>
-		                    <option value="7a+">7a+</option>
-		                    <option value="7b">7b</option>
-		                    <option value="7b+">7b+</option>
-		                    <option value="7c">7c</option>
-		                    <option value="7c+">7c+</option>
-		                    <option value="8a">8a</option>
-		                </select>
+						<select id="difficulty" th:field="*{difficulty}"
+							class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+							<option value="" disabled selected>Select Difficulty</option>
+							<option value="5a">5a</option>
+							<option value="5b">5b</option>
+							<option value="5c">5c</option>
+							<option value="6a">6a</option>
+							<option value="6a+">6a+</option>
+							<option value="6b">6b</option>
+							<option value="6b+">6b+</option>
+							<option value="6c">6c</option>
+							<option value="6c+">6c+</option>
+							<option value="7a">7a</option>
+							<option value="7a+">7a+</option>
+							<option value="7b">7b</option>
+							<option value="7b+">7b+</option>
+							<option value="7c">7c</option>
+							<option value="7c+">7c+</option>
+							<option value="8a">8a</option>
+						</select>
 						<p th:if="${#fields.hasErrors('difficulty')}"
 							th:errors="*{difficulty}" style="color: red;"></p>
 					</div>

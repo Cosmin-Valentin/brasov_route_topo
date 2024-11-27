@@ -27,5 +27,20 @@
 			</div>
 		</div>
 	</main>
+	<script>
+    function toggleSectorInput(selectElement) {
+        const newSectorDiv = document.getElementById("new-sector-div");
+        const newSectorInput = document.getElementById("new-sector");
+
+        if (selectElement.value === "new") {
+            newSectorDiv.style.display = "block";
+            newSectorInput.required = true;      
+        } else {
+            newSectorDiv.style.display = "none"; 
+            newSectorInput.value = "";          
+            newSectorInput.required = false;   
+        }
+    }
+</script>
 </body>
 </html>

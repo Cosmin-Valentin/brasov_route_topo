@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class RouteForm {
+	
+	private String sector;
 
 	@NotBlank(message = "Numele rutei este necesar")
 	@Size(max = 50, message = "Pastreaza numele sub 50 de caractere")
@@ -26,6 +28,10 @@ public class RouteForm {
 
 	public void setDifficulty(String difficulty) {
 		this.difficulty = difficulty;
+	}
+
+	public String getSector() {
+		return sector;
 	}
 
 }
