@@ -35,17 +35,16 @@ public class RouteController {
 
 	@GetMapping("/add-route")
 	public String getRouteForm(Model model) {
-		Collection<Sector> sectors = routeService.getAllSectors();
-		model.addAttribute("sectors", sectors);
+		model.addAttribute("sectors", routeService.getAllSectors());
 		model.addAttribute("routeForm", new RouteForm());
 		model.addAttribute("body", "page-route-form");
 
 		return "main-layout";
 	}
 
+	
 	@PostMapping("/add-route")
-	public String addRoute(@Valid RouteForm routeForm, BindingResult result,
-			@RequestParam(required = false) String newSector, Model model) {
+	public String addRoute(@Valid RouteForm routeForm, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			model.addAttribute("sectors", routeService.getAllSectors());
 			model.addAttribute("body", "page-route-form");
@@ -54,6 +53,7 @@ public class RouteController {
 		}
 
 		String sectorName = routeForm.getSector();
+		String newSector = routeForm.getNewSector();
 
 		if ("new".equals(sectorName) && newSector != null && !newSector.isBlank()) {
 			sectorName = newSector;

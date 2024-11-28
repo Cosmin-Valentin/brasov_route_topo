@@ -4,8 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class RouteForm {
-	
+
 	private String sector;
+
+	private String newSector;
 
 	@NotBlank(message = "Numele rutei este necesar")
 	@Size(max = 50, message = "Pastreaza numele sub 50 de caractere")
@@ -32,6 +34,24 @@ public class RouteForm {
 
 	public String getSector() {
 		return sector;
+	}
+
+	public void setSector(String sector) {
+		this.sector = sector;
+	}
+
+	public String getNewSector() {
+		return newSector;
+	}
+
+	public void setNewSector(String newSector) {
+		this.newSector = newSector;
+	}
+
+	@Override
+	public String toString() {
+		return "RouteForm [sector=" + sector + ", newSector=" + newSector + ", name=" + name + ", difficulty="
+				+ difficulty + "]";
 	}
 
 }
