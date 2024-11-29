@@ -24,14 +24,13 @@ public class RouteController {
 		this.routeService = routeService;
 	}
 
-//	@GetMapping("/routes")
-//	public String getAllRoutes(Model model) {
-//		Collection<Route> routes = routeService.getAllRoutes();
-//		model.addAttribute("routes", routes);
-//		model.addAttribute("body", "page-route");
-//
-//		return "main-layout";
-//	}
+	@GetMapping("/routes")
+	public String getAllRoutes(Model model) {
+		model.addAttribute("sectors", routeService.getAllSectors());
+		model.addAttribute("body", "page-route");
+
+		return "main-layout";
+	}
 
 	@GetMapping("/add-route")
 	public String getRouteForm(Model model) {

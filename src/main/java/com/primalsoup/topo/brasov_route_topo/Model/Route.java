@@ -25,4 +25,17 @@ public class Route {
 	public void setDifficulty(String difficulty) {
 		this.difficulty = difficulty;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		Route route = (Route) o;
+		return name.equals(route.name);
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
 }

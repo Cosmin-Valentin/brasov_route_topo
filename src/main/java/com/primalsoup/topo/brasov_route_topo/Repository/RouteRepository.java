@@ -24,8 +24,10 @@ public class RouteRepository {
 		if(sector == null) {
 			sector = new Sector(sectorName);
 			sectorMap.put(sectorName, sector);
-		}
+		} 
 		
-		sector.addRoute(route);
+		if(!sector.getRoutes().contains(route)) {
+			sector.addRoute(route);
+		}
 	}
 }

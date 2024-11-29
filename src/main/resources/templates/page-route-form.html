@@ -18,10 +18,12 @@
 							<option disabled value="" th:text="'Alege sector'"></option>
 							<option th:each="sector : ${sectors}"
 								th:value="${sector.getName}" th:text="${sector.getName}"></option>
-							<option value="new" class="font-semibold">Adauga sector nou</option>
+							<option value="new" class="font-semibold">Adauga sector
+								nou</option>
 						</select>
 					</div>
 				</div>
+				
 				<div class="sm:col-span-4" id="new-sector-div"
 					style="display: none;">
 					<label for="new-sector"
@@ -33,6 +35,7 @@
 							required placeholder="Adauga nume sector...">
 					</div>
 				</div>
+
 				<div class="sm:col-span-4">
 					<label for="name" class="block text-sm/6 font-medium text-gray-900">Numele
 						rutei:</label>
@@ -44,6 +47,7 @@
 							style="color: red;"></p>
 					</div>
 				</div>
+
 				<div class="sm:col-span-4">
 					<label for="difficulty"
 						class="block text-sm/6 font-medium text-gray-900">Dificultate
