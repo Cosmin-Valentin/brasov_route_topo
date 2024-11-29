@@ -24,17 +24,17 @@ public class RouteController {
 		this.routeService = routeService;
 	}
 
-	@GetMapping("/routes")
-	public String getAllRoutes(Model model) {
-		model.addAttribute("sectors", routeService.getAllSectors());
-		model.addAttribute("body", "page-route");
-
-		return "main-layout";
-	}
+//	@GetMapping("/routes")
+//	public String getAllRoutes(Model model) {
+//		model.addAttribute("sectors", routeService.getAllSectors());
+//		model.addAttribute("body", "page-route");
+//
+//		return "main-layout";
+//	}
 
 	@GetMapping("/add-route")
 	public String getRouteForm(Model model) {
-		model.addAttribute("sectors", routeService.getAllSectors());
+		model.addAttribute("zones", routeService.getAllZones());
 		model.addAttribute("routeForm", new RouteForm());
 		model.addAttribute("body", "page-route-form");
 
@@ -45,23 +45,31 @@ public class RouteController {
 	@PostMapping("/add-route")
 	public String addRoute(@Valid RouteForm routeForm, BindingResult result, Model model) {
 		if (result.hasErrors()) {
-			model.addAttribute("sectors", routeService.getAllSectors());
+			model.addAttribute("zones", routeService.getAllZones());
 			model.addAttribute("body", "page-route-form");
 
 			return "main-layout";
 		}
 
+		System.out.println(routeForm);
+		
+		String zoneName = routeForm.getZone();
+		String newZone = routeForm.getNewZone();
 		String sectorName = routeForm.getSector();
 		String newSector = routeForm.getNewSector();
+		
+		if("new".equals(newZone) && newZone != null && !newZone.isBlank()) {
+			zoneName = newZone;
+		}
 
 		if ("new".equals(sectorName) && newSector != null && !newSector.isBlank()) {
 			sectorName = newSector;
 		}
 
 		Route route = new Route(routeForm.getName(), routeForm.getDifficulty());
-		routeService.addRouteToSector(sectorName, route);
+		routeService.addRouteToSector(zoneName, sectorName, route);
 
-		model.addAttribute("sectors", routeService.getAllSectors());
+		model.addAttribute("zones", routeService.getAllZones());
 		model.addAttribute("body", "page-route");
 
 		return "main-layout";

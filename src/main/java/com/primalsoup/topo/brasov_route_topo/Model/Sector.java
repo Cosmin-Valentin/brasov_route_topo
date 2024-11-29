@@ -24,4 +24,17 @@ public class Sector {
 		routes.add(route);
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		Sector sector = (Sector) o;
+		return name.equals(sector.name);
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
 }

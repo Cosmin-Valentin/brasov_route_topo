@@ -5,8 +5,9 @@ import jakarta.validation.constraints.Size;
 
 public class RouteForm {
 
+	private String zone;
+	private String newZone;
 	private String sector;
-
 	private String newSector;
 
 	@NotBlank(message = "Numele rutei este necesar")
@@ -31,6 +32,22 @@ public class RouteForm {
 	public void setDifficulty(String difficulty) {
 		this.difficulty = difficulty;
 	}
+	
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zone) {
+		this.zone = zone;
+	}
+
+	public String getNewZone() {
+		return newZone;
+	}
+
+	public void setNewZone(String newZone) {
+		this.newZone = newZone;
+	}
 
 	public String getSector() {
 		return sector;
@@ -50,8 +67,8 @@ public class RouteForm {
 
 	@Override
 	public String toString() {
-		return "RouteForm [sector=" + sector + ", newSector=" + newSector + ", name=" + name + ", difficulty="
-				+ difficulty + "]";
+		return "RouteForm [zone=" + zone + ", newZone=" + newZone + ", sector=" + sector + ", newSector=" + newSector
+				+ ", name=" + name + ", difficulty=" + difficulty + "]";
 	}
 
 }
