@@ -16,27 +16,26 @@
 							onchange="toggleZoneInput(this)"
 							class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
 							<option disabled value="" th:text="'Alege Zona'"></option>
-							<option th:each="zone : ${zones}"
+							<option th:each="zone : ${zones}" th:zone-id="${zoneStat.index}"
 								th:value="${zone.getName}" th:text="${zone.getName}"></option>
 							<option value="new" class="font-semibold">Adauga zona
 								noua</option>
 						</select>
 					</div>
 				</div>
-				
-				<div class="sm:col-span-4" id="new-zone-div"
-					style="display: none;">
+
+				<div class="sm:col-span-4" id="new-zone-div" style="display: none;">
 					<label for="new-zone"
 						class="block text-sm/6 font-medium text-gray-900">Nume
 						zona noua:</label>
 					<div class="mt-2">
-						<input type="text" name="newZone" id="new-Zone"
+						<input type="text" name="newZone" id="new-zone"
 							class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
 							required placeholder="Adauga nume zona...">
 					</div>
 				</div>
-			
-			 <div class="sm:col-span-4">
+
+				<div th:if="${#lists.isEmpty(zones)}" class="sm:col-span-4">
 					<label for="sector-selector"
 						class="block text-sm/6 font-medium text-gray-900">Sector:</label>
 					<div class="mt-2">
@@ -51,7 +50,7 @@
 						</select>
 					</div>
 				</div>
-				
+
 				<div class="sm:col-span-4" id="new-sector-div"
 					style="display: none;">
 					<label for="new-sector"
@@ -116,7 +115,13 @@
 	</div>
 </form>
 
+<script th:inline="javascript">
+	jsonData = /*[[${jsonData}]]*/ {};
+</script>
+
 <script defer>
+	let data = JSON.parse(jsonData);
+	
 	const zoneSelect = document.getElementById('zone-select');
 	const newZoneDiv = document.getElementById('new-zone-div');
 	const newZoneInput = document.getElementById('new-zone');
@@ -124,18 +129,6 @@
 	const sectorSelect = document.getElementById('sector-select'); 
 	const newSectorDiv = document.getElementById('new-sector-div');
 	const newSectorInput = document.getElementById('new-sector'); 
-	
-	function toggleZoneInput(selectElement) {
-		if(selectElement.value == 'new') {
-			newZoneDiv.style.display = 'block';
-			newZoneInput.required = true;
-			newZoneInput.value = '';
-		} else {
-			newZoneDiv.style.display = 'none';
-			newZoneInput.required = false;
-		}
-	}
-	
 	function toggleSectorInput(selectElement) {
 	    if (selectElement.value === 'new') {
 	        newSectorDiv.style.display = 'block';
@@ -147,6 +140,28 @@
 	    }
 	}
 	
+	
+	function toggleZoneInput(selectElement) {
+		const zoneValue = selectElement.value;
+		if(zoneValue == 'new') {
+			newZoneDiv.style.display = 'block';
+			newZoneInput.required = true;
+			newZoneInput.value = '';
+		} else {
+			const zoneId = selectElement.options[selectElement.selectedIndex].getAttribute('zone-id');
+			
+			if(data[zoneId].name === zoneValue) {
+				const sectors = data[zoneId].sectors;
+				createSectorSelect(sectors);
+				
+			}
+			newZoneDiv.style.display = 'none';
+			newZoneInput.required = false;
+		}
+	}
+	
+	
+	
 	document.addEventListener('DOMContentLoaded', () => {
 		if(zoneSelect.value === 'new') {
 			newZoneDiv.style.display = 'block';
@@ -154,10 +169,31 @@
 			newZoneInput.value = zoneSelect.value;
 		}
 		
-	    if(sectorSelect.value === 'new') {
+	     if(sectorSelect.value === 'new') {
 	    	newSectorDiv.style.display = 'block'
 	    } else {
 	    	newSectorInput.value = sectorSelect.value;
-	    }
+	    } 
 	});
+	
+	function createSectorSelect(sectors) {
+		let sectorDiv = document.createElement('div');
+		sectorDiv.classList.add('sm:col-span-4');
+		let sectorHtml = `<label for="sector-selector" class="block text-sm/6 font-medium text-gray-900">Sector:</label>
+									<div class="mt-2">
+										<select id="sector-select"
+											onchange="toggleSectorInput(this)"
+											class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+											<option disabled value="">Alege sector</option>`;
+		sectors.forEach(sector => {
+			sectorHtml += `<option value=${sector.name}>${sector.name}</option>`;
+		});
+		sectorHtml += `<option value="new" class="font-semibold">Adauga sector nou</option>
+			</select>
+			</div>`;
+			
+		sectorDiv.innerHtml = sectorHtml;
+		newSectorDiv.parentNode.insertBefore(sectorDiv, newSectorDiv);
+		console.log(sectorDiv);
+	}
 </script>

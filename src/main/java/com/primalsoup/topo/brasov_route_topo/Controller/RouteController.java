@@ -1,17 +1,15 @@
 package com.primalsoup.topo.brasov_route_topo.Controller;
 
-import java.util.Collection;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.primalsoup.topo.brasov_route_topo.DTO.RouteForm;
 import com.primalsoup.topo.brasov_route_topo.Model.Route;
-import com.primalsoup.topo.brasov_route_topo.Model.Sector;
 import com.primalsoup.topo.brasov_route_topo.Service.RouteService;
 
 import jakarta.validation.Valid;
@@ -33,14 +31,16 @@ public class RouteController {
 //	}
 
 	@GetMapping("/add-route")
-	public String getRouteForm(Model model) {
+	public String getRouteForm(Model model) throws JsonProcessingException {
 		model.addAttribute("zones", routeService.getAllZones());
+		String jsonData = new ObjectMapper().writeValueAsString(routeService.getAllZones());
+		System.out.println("json: " + jsonData);
+		model.addAttribute("jsonData",jsonData);
 		model.addAttribute("routeForm", new RouteForm());
 		model.addAttribute("body", "page-route-form");
 
 		return "main-layout";
 	}
-
 	
 	@PostMapping("/add-route")
 	public String addRoute(@Valid RouteForm routeForm, BindingResult result, Model model) {
@@ -51,14 +51,14 @@ public class RouteController {
 			return "main-layout";
 		}
 
-		System.out.println(routeForm);
+//		System.out.println(routeForm);
 		
 		String zoneName = routeForm.getZone();
 		String newZone = routeForm.getNewZone();
 		String sectorName = routeForm.getSector();
 		String newSector = routeForm.getNewSector();
 		
-		if("new".equals(newZone) && newZone != null && !newZone.isBlank()) {
+		if("new".equals(zoneName) && newZone != null && !newZone.isBlank()) {
 			zoneName = newZone;
 		}
 
@@ -68,6 +68,7 @@ public class RouteController {
 
 		Route route = new Route(routeForm.getName(), routeForm.getDifficulty());
 		routeService.addRouteToSector(zoneName, sectorName, route);
+//		System.out.printf("zone: %s; sector: %s; route:%s", zoneName, sectorName, route);
 
 		model.addAttribute("zones", routeService.getAllZones());
 		model.addAttribute("body", "page-route");

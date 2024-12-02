@@ -24,7 +24,7 @@ public class RouteRepository {
 //	}
 
 	public void saveRouteToSector(String zoneName, String sectorName, Route route) {
-		Zone zone = zoneMap.computeIfAbsent(sectorName, Zone::new);
+		Zone zone = zoneMap.computeIfAbsent(zoneName, Zone::new);
 
 		Sector sector = zone.getSectors().stream()
                 .filter(s -> s.equals(new Sector(sectorName)))
