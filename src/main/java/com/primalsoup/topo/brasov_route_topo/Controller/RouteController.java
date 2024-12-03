@@ -29,7 +29,7 @@ public class RouteController {
 //
 //		return "main-layout";
 //	}
-
+	
 	@GetMapping("/add-route")
 	public String getRouteForm(Model model) throws JsonProcessingException {
 		model.addAttribute("zones", routeService.getAllZones());
@@ -50,7 +50,7 @@ public class RouteController {
 
 			return "main-layout";
 		}
-
+		
 //		System.out.println(routeForm);
 		
 		String zoneName = routeForm.getZone();
@@ -68,6 +68,7 @@ public class RouteController {
 
 		Route route = new Route(routeForm.getName(), routeForm.getDifficulty());
 		routeService.addRouteToSector(zoneName, sectorName, route);
+		
 //		System.out.printf("zone: %s; sector: %s; route:%s", zoneName, sectorName, route);
 
 		model.addAttribute("zones", routeService.getAllZones());
