@@ -1,5 +1,5 @@
 <form action="#" th:action="@{/add-route}" th:object="${routeForm}"
-	method="post" id="myForm">
+	method="post">
 	<div class="space-y-12">
 		<div class="border-b border-gray-900/10 pb-12">
 			<h2 class="text-base/7 font-semibold text-gray-900">Adauga
@@ -16,7 +16,7 @@
 							onchange="toggleZoneInput(this)"
 							class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
 							<option disabled value="" th:text="'Alege Zona'"></option>
-							<option th:each="zone : ${zones}" th:zone-id="${zoneStat.index}"
+							<option th:each="zone : ${zones}" th:data-zone-id="${zoneStat.index}"
 								th:value="${zone.getName}" th:text="${zone.getName}"></option>
 							<option value="new" class="font-semibold">Adauga zona
 								noua</option>
@@ -115,32 +115,15 @@
 	</div>
 </form>
 
-<script th:inline="javascript">
-	jsonData = /*[[${jsonData}]]*/ {};
-</script>
-
-<script defer>
-	const form = document.getElementById('myForm');
-	form.addEventListener('submit', function(e) {
-		const zoneInput = document.getElementById('new-zone')
-		const sectorInput = document.getElementById('new-sector')
-		const routeInput = document.getElementById('name')
-
-		console.log('zone - ' + zoneInput.value);
-		console.log('sector - ' + sectorInput.value);
-		console.log('route - ' + routeInput.value);
-		
-	});
-	
+<script th:inline="javascript" defer>
+	const jsonData = /*[[${jsonData}]]*/ {};
 	const data = JSON.parse(jsonData);
 	
 	const zoneSelect = document.getElementById('zone-select');
 	const newZoneDiv = document.getElementById('new-zone-div');
 	const newZoneInput = document.getElementById('new-zone');
-	 
 	const newSectorDiv = document.getElementById('new-sector-div');
 	const newSectorInput = document.getElementById('new-sector'); 
-	
 
 	function toggleSectorInput(selectElement) {
 	    if (selectElement.value === 'new') {
@@ -153,7 +136,6 @@
 	        newSectorInput.value = selectElement.value;
 	    }
 	}
-	
 	
 	function toggleZoneInput(selectElement) {
 		if(selectElement.value == 'new') {
@@ -198,8 +180,8 @@
 					class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
 					<option disabled value="">Alege sector</option>`;
 		
-		if(typeof zoneSelectElement !== 'undefined') {
-			const zoneId = zoneSelectElement.options[zoneSelectElement.selectedIndex].getAttribute('zone-id');
+		if(zoneSelectElement) {
+			const zoneId = zoneSelectElement.options[zoneSelectElement.selectedIndex].dataset.zoneId;
 			if(data[zoneId].name !== zoneSelectElement.value) {
 				return;
 			}
@@ -207,13 +189,11 @@
 			const sectors = data[zoneId].sectors;
 			
 			sectors.forEach(sector => {
-				sectorHtml += `<option value=${sector.name}>${sector.name}</option>`;
+				sectorHtml += `<option value="${sector.name}">${sector.name}</option>`;
 			});
 		} 
 		
-		sectorHtml += `<option value="new" class="font-semibold">Adauga sector nou</option>
-			</select>
-			</div>`;
+		sectorHtml += `<option value="new" class="font-semibold">Adauga sector nou</option></select></div>`;
 			
 		sectorDiv.innerHTML = sectorHtml;
 		newSectorDiv.parentNode.insertBefore(sectorDiv, newSectorDiv);
