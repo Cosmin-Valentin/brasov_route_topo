@@ -3,38 +3,79 @@ package com.primalsoup.topo.brasov_route_topo.Model;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+
+@Entity
 public class Sector {
-	
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	private String name;
+
+	@OneToOne
+	@JoinColumn(name = "zone_id")
+	private Zone zone;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "sector")
 	private List<Route> routes = new ArrayList<>();
-	
+
+	public Sector() {
+	}
+
 	public Sector(String name) {
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Zone getZone() {
+		return zone;
+	}
+
+	public void setZone(Zone zone) {
+		this.zone = zone;
+	}
+
 	public List<Route> getRoutes() {
 		return routes;
 	}
-	
-	public void addRoute(Route route) {
-		routes.add(route);
+
+	public void setRoutes(List<Route> routes) {
+		this.routes = routes;
 	}
-	
+
+	public void addRoute(Route route) {
+		this.routes.add(route);
+		route.setSector(this);
+	}
+
 	@Override
 	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		Sector sector = (Sector) o;
 		return name.equals(sector.name);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return name.hashCode();
 	}
-	
+
 }

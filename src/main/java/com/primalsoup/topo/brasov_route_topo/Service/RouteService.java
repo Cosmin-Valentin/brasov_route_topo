@@ -1,26 +1,63 @@
 package com.primalsoup.topo.brasov_route_topo.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.primalsoup.topo.brasov_route_topo.Model.Route;
+import com.primalsoup.topo.brasov_route_topo.Model.Sector;
 import com.primalsoup.topo.brasov_route_topo.Model.Zone;
 import com.primalsoup.topo.brasov_route_topo.Repository.RouteRepository;
+import com.primalsoup.topo.brasov_route_topo.Repository.SectorRepository;
+import com.primalsoup.topo.brasov_route_topo.Repository.ZoneRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class RouteService {
 	private final RouteRepository routeRepository;
+	private final ZoneRepository zoneRepository;
+	private final SectorRepository sectorRepository;
 
-	public RouteService(RouteRepository routeRepository) {
+	public RouteService(RouteRepository routeRepository, ZoneRepository zoneRepository,
+			SectorRepository sectorRepository) {
 		this.routeRepository = routeRepository;
+		this.zoneRepository = zoneRepository;
+		this.sectorRepository = sectorRepository;
 	}
 
 	public Collection<Zone> getAllZones() {
-		return routeRepository.findAllZones();
+		return (Collection<Zone>) zoneRepository.findAll();
 	}
 
-	public void addRouteToSector(String zoneName, String sectorName, Route route) {
-		routeRepository.saveRouteToSector(zoneName, sectorName, route);
+	@Transactional
+	public void addRoute(String zoneName, String sectorName, Route route) {
+		Optional<Zone> zoneOpt = zoneRepository.findByName(zoneName);
+		Zone zone = zoneOpt.orElseGet(() -> {
+			Zone newZone = new Zone(zoneName);
+			zoneRepository.save(newZone);
+			return newZone;
+		});
+
+		Optional<Sector> sectorOpt = sectorRepository.findByName(sectorName);
+		Sector sector = sectorOpt.orElseGet(() -> {
+			Sector newSector = new Sector(sectorName);
+			sectorRepository.save(newSector);
+			return newSector;
+		});
+
+		if (!zone.getSectors().contains(sector)) {
+			zone.addSector(sector);
+		}
+
+		if (!sector.getRoutes().contains(route)) {
+			sector.addRoute(route);
+		}
+
+		route.setSector(sector);
+		routeRepository.save(route);
+
+		zoneRepository.save(zone);
 	}
 }
