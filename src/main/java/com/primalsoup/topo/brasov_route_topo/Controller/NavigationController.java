@@ -13,18 +13,4 @@ public class NavigationController {
 
 		return "main-layout";
 	}
-
-	@GetMapping("/areas")
-	public String getAreasPage(Model model) {
-		model.addAttribute("body", "page-areas");
-
-		return "main-layout";
-	}
-
-	@GetMapping("/sectors")
-	public String getSectorsPage(Model model) {
-		model.addAttribute("body", "page-sectors");
-
-		return "main-layout";
-	}
 }

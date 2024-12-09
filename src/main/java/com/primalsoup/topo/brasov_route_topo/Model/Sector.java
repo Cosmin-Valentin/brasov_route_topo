@@ -62,6 +62,10 @@ public class Sector {
 		this.routes.add(route);
 		route.setSector(this);
 	}
+	
+	public int getRouteCount() {
+		return this.routes.size();
+	}
 
 	@Override
 	public boolean equals(Object o) {

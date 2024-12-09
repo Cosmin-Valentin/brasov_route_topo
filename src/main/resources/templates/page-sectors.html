@@ -1,8 +1,24 @@
 <div class="text-center">
 	<h1
-		class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">Welcome
-		to the climbing sectors page</h1>
-	<p
-		class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">Sorry,
-		currently there isn't much here.</p>
+		class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
+		Sectoare pentru zona: <span th:text="${zone.name}"></span>
+	</h1>
+	<p th:unless="${#lists.isEmpty(zone.sectors)}"
+		class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+		Explorează sectoarele de cățărat din zonă</p>
 </div>
+
+<div th:if="${zone != null}"
+	class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+	<div th:each="sector : ${zone.sectors}"
+		class="rounded-lg bg-gray-100 p-6 text-center shadow-md">
+		<h2 class="text-xl font-semibold text-gray-800"
+			th:text="${sector.name}"></h2>
+		<p class="mt-2 text-gray-600">
+			<span th:text="'Trasee: ' + ${sector.getRouteCount}"></span>
+		</p>
+	</div>
+</div>
+
+<p th:if="${zone == null}" class="text-red-500">Nu au fost găsite
+	sectoare pentru această zonă.</p>

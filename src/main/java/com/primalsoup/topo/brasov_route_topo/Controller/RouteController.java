@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +38,25 @@ public class RouteController {
 	public String getLatestRoutes(Model model) {
 		List<Route> routes = routeService.getAllRoutesSortedByDate();
 		model.addAttribute("routes", routes);
-		model.addAttribute("body", "page-route");
+		model.addAttribute("body", "page-routes");
+		
+		return "main-layout";
+	}
+	
+	@GetMapping("/areas")
+	public String getAreasPage(Model model) {
+		Collection<Zone> zones = routeService.getAllZones();
+		model.addAttribute("zones", zones);
+		model.addAttribute("body", "page-areas");
+
+		return "main-layout";
+	}
+	
+	@GetMapping("/areas/{zoneId}")
+	public String getSectorsPage(@PathVariable Long zoneId, Model model) {
+		Zone zone = routeService.getZoneById(zoneId);
+		model.addAttribute("zone", zone);
+		model.addAttribute("body", "page-sectors");
 		
 		return "main-layout";
 	}

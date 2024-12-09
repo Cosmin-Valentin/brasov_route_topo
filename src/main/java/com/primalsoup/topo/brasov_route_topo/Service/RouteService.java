@@ -32,6 +32,10 @@ public class RouteService {
 		return (Collection<Zone>) zoneRepository.findAll();
 	}
 	
+	public Zone getZoneById(Long id) {
+		return zoneRepository.findById(id).orElse(null);
+	}
+	
 	public boolean routeExistsInSector(String routeName, String sectorName) {
 		return routeRepository.existsByNameAndSectorName(routeName, sectorName);
 	}

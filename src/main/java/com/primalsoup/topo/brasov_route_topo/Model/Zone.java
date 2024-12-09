@@ -56,4 +56,12 @@ public class Zone {
 	public void setSectors(List<Sector> sectors) {
 		this.sectors = sectors;
 	}
+	
+	public int getSectorCount() {
+		return this.sectors.size();
+	}
+	
+	public int getTotalRoutes() {
+		return this.sectors.stream().mapToInt(sector -> sector.getRoutes().size()).sum();
+	}
 }
