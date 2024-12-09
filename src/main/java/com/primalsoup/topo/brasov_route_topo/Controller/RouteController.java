@@ -19,6 +19,7 @@ import com.primalsoup.topo.brasov_route_topo.DTO.RouteForm;
 import com.primalsoup.topo.brasov_route_topo.DTO.SectorDTO;
 import com.primalsoup.topo.brasov_route_topo.DTO.ZoneDTO;
 import com.primalsoup.topo.brasov_route_topo.Model.Route;
+import com.primalsoup.topo.brasov_route_topo.Model.Sector;
 import com.primalsoup.topo.brasov_route_topo.Model.Zone;
 import com.primalsoup.topo.brasov_route_topo.Service.RouteService;
 
@@ -33,16 +34,30 @@ public class RouteController {
 		this.routeService = routeService;
 		this.objectMapper = objectMapper;
 	}
-	
+
 	@GetMapping("/routes")
 	public String getLatestRoutes(Model model) {
 		List<Route> routes = routeService.getAllRoutesSortedByDate();
 		model.addAttribute("routes", routes);
 		model.addAttribute("body", "page-routes");
-		
+
 		return "main-layout";
 	}
-	
+
+	@GetMapping("/areas/{zoneId}/sectors/{sectorId}")
+	public String getRoutesPage(@PathVariable Long zoneId, @PathVariable Long sectorId, Model model) {
+		System.out.println("---->getRoutes");
+		Zone zone = routeService.getZoneById(zoneId);
+		Sector sector = routeService.getSectorById(sectorId);
+
+		model.addAttribute("zone", zone);
+		model.addAttribute("sector", sector);
+		model.addAttribute("routes", sector.getRoutes());
+		model.addAttribute("body", "page-routes");
+
+		return "main-layout";
+	}
+
 	@GetMapping("/areas")
 	public String getAreasPage(Model model) {
 		Collection<Zone> zones = routeService.getAllZones();
@@ -51,13 +66,14 @@ public class RouteController {
 
 		return "main-layout";
 	}
-	
+
 	@GetMapping("/areas/{zoneId}")
 	public String getSectorsPage(@PathVariable Long zoneId, Model model) {
+		System.out.println("---->getSectors");
 		Zone zone = routeService.getZoneById(zoneId);
 		model.addAttribute("zone", zone);
 		model.addAttribute("body", "page-sectors");
-		
+
 		return "main-layout";
 	}
 

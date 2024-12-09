@@ -34,6 +34,14 @@ public class Sector {
 		this.name = name;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -62,7 +70,7 @@ public class Sector {
 		this.routes.add(route);
 		route.setSector(this);
 	}
-	
+
 	public int getRouteCount() {
 		return this.routes.size();
 	}

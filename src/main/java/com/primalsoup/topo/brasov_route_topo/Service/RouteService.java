@@ -20,7 +20,7 @@ public class RouteService {
 	private final RouteRepository routeRepository;
 	private final ZoneRepository zoneRepository;
 	private final SectorRepository sectorRepository;
-	
+
 	public RouteService(RouteRepository routeRepository, ZoneRepository zoneRepository,
 			SectorRepository sectorRepository) {
 		this.routeRepository = routeRepository;
@@ -31,19 +31,23 @@ public class RouteService {
 	public Collection<Zone> getAllZones() {
 		return (Collection<Zone>) zoneRepository.findAll();
 	}
-	
+
 	public Zone getZoneById(Long id) {
 		return zoneRepository.findById(id).orElse(null);
 	}
-	
+
+	public Sector getSectorById(Long id) {
+		return sectorRepository.findById(id).orElse(null);
+	}
+
 	public boolean routeExistsInSector(String routeName, String sectorName) {
 		return routeRepository.existsByNameAndSectorName(routeName, sectorName);
 	}
-	
+
 	public List<Route> getAllRoutesSortedByDate() {
 		return routeRepository.findRoutesByCreatedAtDate();
 	}
-	
+
 	@Transactional
 	public void addRoute(String zoneName, String sectorName, Route route) {
 		Optional<Zone> zoneOpt = zoneRepository.findByName(zoneName);
