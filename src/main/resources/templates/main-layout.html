@@ -12,12 +12,14 @@
 			class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
 			aria-label="Global">
 			<div class="flex gap-x-12">
-				<a href="/" class="text-sm/6 font-semibold text-gray-900">Home</a> <a
-					href="/areas" class="text-sm/6 font-semibold text-gray-900">Zone
-					de cățărat</a> <a href="/routes"
-					class="text-sm/6 font-semibold text-gray-900">Ultimele trasee
-					adăugate</a> <a href="/add-route"
-					class="text-sm/6 font-semibold text-gray-900">Adaugă traseu</a>
+				<a href="/" class="text-sm/6 font-semibold text-gray-900">Home</a> 
+				<a href="/areas" class="text-sm/6 font-semibold text-gray-900">Zone de cățărat</a> 
+				<a href="/routes" class="text-sm/6 font-semibold text-gray-900">Ultimele trasee adăugate</a> 
+				<a href="/add-route" th:if="${#authentication != null}" class="text-sm/6 font-semibold text-gray-900">Adaugă traseu</a>
+					
+				<a href="/login" th:if="${#authentication == null}" class="text-sm/6 font-semibold text-gray-900">Login</a>
+                <a href="/logout" th:if="${#authentication != null}" class="text-sm/6 font-semibold text-gray-900">Logout</a>
+			
 			</div>
 		</nav>
 	</header>
