@@ -1,6 +1,7 @@
 package com.primalsoup.topo.brasov_route_topo.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -33,6 +34,10 @@ public class RouteService {
 	
 	public boolean routeExistsInSector(String routeName, String sectorName) {
 		return routeRepository.existsByNameAndSectorName(routeName, sectorName);
+	}
+	
+	public List<Route> getAllRoutesSortedByDate() {
+		return routeRepository.findRoutesByCreatedAtDate();
 	}
 	
 	@Transactional

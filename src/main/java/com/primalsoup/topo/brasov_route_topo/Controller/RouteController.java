@@ -32,6 +32,15 @@ public class RouteController {
 		this.routeService = routeService;
 		this.objectMapper = objectMapper;
 	}
+	
+	@GetMapping("/routes")
+	public String getLatestRoutes(Model model) {
+		List<Route> routes = routeService.getAllRoutesSortedByDate();
+		model.addAttribute("routes", routes);
+		model.addAttribute("body", "page-route");
+		
+		return "main-layout";
+	}
 
 	@GetMapping("/add-route")
 	public String getRouteForm(Model model) throws JsonProcessingException {
