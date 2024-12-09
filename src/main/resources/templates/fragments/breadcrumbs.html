@@ -1,0 +1,14 @@
+<div th:fragment="breadcrumbContent">
+    <div class="breadcrumbs text-sm text-gray-500 mb-4">
+        <a th:href="@{/areas}" class="hover:underline">Zone</a>
+        <span th:if="${zone != null}"> > 
+            <a th:href="@{/areas/{zoneId}(zoneId=${zone.id})}" class="hover:underline" th:text="${zone.name}"></a>
+        </span>
+        <span th:if="${sector != null}"> > 
+            <a th:href="@{/areas/{zoneId}/sectors/{sectorId}(zoneId=${zone.id}, sectorId=${sector.id})}" class="hover:underline" th:text="${sector.name}"></a>
+        </span>
+        <span th:if="${routes != null}"> > 
+            <span class="text-gray-800">Rute</span>
+        </span>
+    </div>
+</div>

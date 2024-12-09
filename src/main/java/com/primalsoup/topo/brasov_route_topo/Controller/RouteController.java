@@ -46,7 +46,6 @@ public class RouteController {
 
 	@GetMapping("/areas/{zoneId}/sectors/{sectorId}")
 	public String getRoutesPage(@PathVariable Long zoneId, @PathVariable Long sectorId, Model model) {
-		System.out.println("---->getRoutes");
 		Zone zone = routeService.getZoneById(zoneId);
 		Sector sector = routeService.getSectorById(sectorId);
 
@@ -69,7 +68,6 @@ public class RouteController {
 
 	@GetMapping("/areas/{zoneId}")
 	public String getSectorsPage(@PathVariable Long zoneId, Model model) {
-		System.out.println("---->getSectors");
 		Zone zone = routeService.getZoneById(zoneId);
 		model.addAttribute("zone", zone);
 		model.addAttribute("body", "page-sectors");

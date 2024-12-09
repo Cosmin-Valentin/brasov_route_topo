@@ -1,3 +1,7 @@
+<div th:if="${zone != null}">
+	<div th:replace="fragments/breadcrumbs :: breadcrumbContent"></div>
+</div>
+
 <div class="text-center">
 	<h1
 		class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
@@ -24,5 +28,3 @@
 	</div>
 </div>
 
-<p th:if="${zone == null}" class="text-red-500">Nu au fost găsite
-	sectoare pentru această zonă.</p>
