@@ -7,4 +7,5 @@ import com.primalsoup.topo.brasov_route_topo.Model.Route;
 
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Long> {
+	boolean existsByNameAndSectorName(String name, String sectorName);
 }

@@ -31,6 +31,10 @@ public class RouteService {
 		return (Collection<Zone>) zoneRepository.findAll();
 	}
 	
+	public boolean routeExistsInSector(String routeName, String sectorName) {
+		return routeRepository.existsByNameAndSectorName(routeName, sectorName);
+	}
+	
 	@Transactional
 	public void addRoute(String zoneName, String sectorName, Route route) {
 		Optional<Zone> zoneOpt = zoneRepository.findByName(zoneName);

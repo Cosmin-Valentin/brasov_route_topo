@@ -1,3 +1,9 @@
+<div th:if="${errors != null && !errors.isEmpty()}" class="error-container bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <ul>
+        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+    </ul>
+</div>
+
 <form action="#" th:action="@{/add-route}" th:object="${routeForm}"
 	method="post">
 	<div class="space-y-12">
@@ -70,8 +76,6 @@
 						<input type="text" name="name" id="name" th:field="*{name}"
 							class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
 							required placeholder="Adauga nume traseu...">
-						<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
-							style="color: red;"></p>
 					</div>
 				</div>
 
@@ -101,8 +105,6 @@
 							<option value="7c+">7c+</option>
 							<option value="8a">8a</option>
 						</select>
-						<p th:if="${#fields.hasErrors('difficulty')}"
-							th:errors="*{difficulty}" style="color: red;"></p>
 					</div>
 				</div>
 			</div>

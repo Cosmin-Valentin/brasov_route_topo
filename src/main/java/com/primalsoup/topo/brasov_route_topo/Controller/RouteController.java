@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -25,69 +26,77 @@ import jakarta.validation.Valid;
 @Controller
 public class RouteController {
 	private final RouteService routeService;
+	private final ObjectMapper objectMapper;
 
-    public RouteController(RouteService routeService) {
-        this.routeService = routeService;
-    }
+	public RouteController(RouteService routeService, ObjectMapper objectMapper) {
+		this.routeService = routeService;
+		this.objectMapper = objectMapper;
+	}
 
-    @GetMapping("/add-route")
-    public String getRouteForm(Model model) throws JsonProcessingException {
-        Collection<Zone> zones = routeService.getAllZones();
-        List<ZoneDTO> zoneDTOs = zones.stream().map(this::convertToZoneDTO).collect(Collectors.toList());
+	@GetMapping("/add-route")
+	public String getRouteForm(Model model) throws JsonProcessingException {
+		populateModelForForm(model, new RouteForm(), null);
+		return "main-layout";
+	}
 
-        String jsonData = new ObjectMapper().writeValueAsString(zoneDTOs);
+	@PostMapping("/add-route")
+	public String addRoute(@Valid RouteForm routeForm, BindingResult result, Model model)
+			throws JsonProcessingException {
+		boolean routeExists = routeService.routeExistsInSector(routeForm.getName(), routeForm.getSector());
 
-        model.addAttribute("zones", zones);
-        model.addAttribute("jsonData", jsonData);  
-        model.addAttribute("routeForm", new RouteForm());
-        model.addAttribute("body", "page-route-form");
+		if (result.hasErrors() || routeExists) {
+			if (routeExists) {
+				result.rejectValue("name", "error.routeForm", "Ruta există deja în acest sector.");
+			}
+			populateModelForForm(model, routeForm, result.getAllErrors());
+			return "main-layout";
+		}
 
-        return "main-layout";
-    }
+		String sectorName = routeForm.getSector();
+		String zoneName = routeForm.getZone();
+		String newZone = routeForm.getNewZone();
+		String newSector = routeForm.getNewSector();
 
-    @PostMapping("/add-route")
-    public String addRoute(@Valid RouteForm routeForm, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("zones", routeService.getAllZones());
-            model.addAttribute("body", "page-route-form");
+		if ("new".equals(zoneName) && newZone != null && !newZone.isBlank()) {
+			zoneName = newZone;
+		}
 
-            return "main-layout";
-        }
-        
-        String zoneName = routeForm.getZone();
-        String newZone = routeForm.getNewZone();
-        String sectorName = routeForm.getSector();
-        String newSector = routeForm.getNewSector();
+		if ("new".equals(sectorName) && newSector != null && !newSector.isBlank()) {
+			sectorName = newSector;
+		}
 
-        if ("new".equals(zoneName) && newZone != null && !newZone.isBlank()) {
-            zoneName = newZone;
-        }
+		Route route = new Route(routeForm.getName(), routeForm.getDifficulty());
+		routeService.addRoute(zoneName, sectorName, route);
 
-        if ("new".equals(sectorName) && newSector != null && !newSector.isBlank()) {
-            sectorName = newSector;
-        }
+		return "redirect:/add-route";
+	}
 
-        Route route = new Route(routeForm.getName(), routeForm.getDifficulty());
-        routeService.addRoute(zoneName, sectorName, route);
+	private void populateModelForForm(Model model, RouteForm routeForm, List<ObjectError> errors)
+			throws JsonProcessingException {
+		Collection<Zone> zones = routeService.getAllZones();
+		List<ZoneDTO> zoneDTOs = zones.stream().map(this::convertToZoneDTO).collect(Collectors.toList());
 
-        model.addAttribute("zones", routeService.getAllZones());
-        model.addAttribute("body", "page-route");
+		String jsonData = objectMapper.writeValueAsString(zoneDTOs);
 
-        return "main-layout";
-    }
+		model.addAttribute("zones", zones);
+		model.addAttribute("jsonData", jsonData);
+		model.addAttribute("routeForm", routeForm);
+		model.addAttribute("errors", errors);
+		model.addAttribute("body", "page-route-form");
+	}
 
-    private ZoneDTO convertToZoneDTO(Zone zone) {
-        ZoneDTO zoneDTO = new ZoneDTO(zone.getName());
+	private ZoneDTO convertToZoneDTO(Zone zone) {
+		ZoneDTO zoneDTO = new ZoneDTO(zone.getName());
 
-        zone.getSectors().forEach(sector -> {
-            SectorDTO sectorDTO = new SectorDTO(sector.getName());
-            sector.getRoutes().forEach(route -> {
-                RouteDTO routeDTO = new RouteDTO(route.getName(), route.getDifficulty());
-                sectorDTO.addRoute(routeDTO);
-            });
-            zoneDTO.addSector(sectorDTO);
-        });
+		zone.getSectors().forEach(sector -> {
+			SectorDTO sectorDTO = new SectorDTO(sector.getName());
+			sector.getRoutes().forEach(route -> {
+				RouteDTO routeDTO = new RouteDTO(route.getName(), route.getDifficulty());
+				sectorDTO.addRoute(routeDTO);
+			});
+			zoneDTO.addSector(sectorDTO);
+		});
 
-        return zoneDTO;
-    }
+		return zoneDTO;
+	}
 }
