@@ -1,4 +1,13 @@
-<div class="mx-auto max-w-2xl lg:mx-0">
+<div th:if="${#lists.isEmpty(routes)}" class="text-center">
+	<h1
+		class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
+		Welcome to the recently added page</h1>
+	<p class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+		Ne pare rău, momentan nu par să existe trasee salvate. Încearcă să
+		adaugi unul nou</p>
+</div>
+
+<div th:unless="${#lists.isEmpty(routes)}" class="mx-auto max-w-2xl lg:mx-0">
 	<h2
 		class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Lista
 		Trasee</h2>
