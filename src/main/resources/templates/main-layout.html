@@ -15,7 +15,7 @@
 				<a href="/" class="text-sm/6 font-semibold text-gray-900">Home</a> 
 				<a href="/areas" class="text-sm/6 font-semibold text-gray-900">Zone de cățărat</a> 
 				<a href="/routes" class="text-sm/6 font-semibold text-gray-900">Ultimele trasee adăugate</a> 
-				<a href="/add-route" th:if="${#authentication?.authorities?.contains(T(org.springframework.security.core.authority.SimpleGrantedAuthority).new('ROLE_USER'))}" class="text-sm/6 font-semibold text-gray-900">Adaugă traseu</a>
+				<a href="/add-route" th:if="${#authentication != null}" class="text-sm/6 font-semibold text-gray-900">Adaugă traseu</a>
 					
 				<a href="/login" th:if="${#authentication == null}" class="text-sm/6 font-semibold text-gray-900">Login</a>
                 <a href="/logout" th:if="${#authentication != null}" class="text-sm/6 font-semibold text-gray-900">Logout</a>
