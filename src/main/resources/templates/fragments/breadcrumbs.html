@@ -1,14 +1,27 @@
 <div th:fragment="breadcrumbContent">
-    <div class="breadcrumbs text-sm text-gray-500 mb-4">
-        <a th:href="@{/areas}" class="hover:underline">Zone</a>
-        <span th:if="${zone != null}"> > 
-            <a th:href="@{/areas/{zoneId}(zoneId=${zone.id})}" class="hover:underline" th:text="${zone.name}"></a>
-        </span>
-        <span th:if="${sector != null}"> > 
-            <a th:href="@{/areas/{zoneId}/sectors/{sectorId}(zoneId=${zone.id}, sectorId=${sector.id})}" class="hover:underline" th:text="${sector.name}"></a>
-        </span>
-        <span th:if="${routes != null}"> > 
-            <span class="text-gray-800">Rute</span>
-        </span>
-    </div>
+    <nav class="breadcrumbs text-sm text-gray-500 mb-4" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 sm:space-x-3">
+            <li>
+                <a th:href="@{/areas}" class="inline-flex items-center text-gray-500 hover:text-gray-700 hover:underline">Zone</a>
+            </li>
+            <li th:if="${zone != null}" class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+                <a th:href="@{/areas/{zoneId}(zoneId=${zone.id})}" class="text-gray-500 hover:text-gray-700 hover:underline" th:text="${zone.name}"></a>
+            </li>
+            <li th:if="${sector != null}" class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+                <a th:href="@{/areas/{zoneId}/sectors/{sectorId}(zoneId=${zone.id}, sectorId=${sector.id})}" class="text-gray-500 hover:text-gray-700 hover:underline" th:text="${sector.name}"></a>
+            </li>
+            <li th:if="${routes != null}" class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="text-gray-800" th:text="'Rute'"></span>
+            </li>
+        </ol>
+    </nav>
 </div>

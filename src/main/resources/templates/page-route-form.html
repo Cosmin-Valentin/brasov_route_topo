@@ -1,92 +1,94 @@
-<div th:if="${errors != null && !errors.isEmpty()}" class="error-container bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-    <ul>
-        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
-    </ul>
-</div>
-
-<form action="#" th:action="@{/add-route}" th:object="${routeForm}" method="post">
-	<div class="space-y-12">
-		<div class="border-b border-gray-900/10 pb-12">
-			<h2 class="text-base/7 font-semibold text-gray-900">Adaugă traseu</h2>
-			<p class="mt-1 text-sm/6 text-gray-600">Te rog introdu informațiile relevante</p>
-
-			<div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-				<div class="sm:col-span-4">
-					<label for="zone-selector" class="block text-sm/6 font-medium text-gray-900">Zonă:</label>
-					<div class="mt-2">
-						<select id="zone-select" th:field="*{zone}" onchange="toggleZoneInput(this)" class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-							<option disabled value="" th:text="'Alege Zona'"></option>
-							<option th:each="zone : ${zones}" th:data-zone-id="${zoneStat.index}" th:value="${zone.getName}" th:text="${zone.getName}"></option>
-							<option value="new" class="font-semibold">Adaugă zonă nouă</option>
-						</select>
+<div class="max-w-7xl px-6 lg:px-8">
+	<div th:if="${errors != null && !errors.isEmpty()}" class="error-container bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+	    <ul>
+	        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+	    </ul>
+	</div>
+	
+	<form action="#" th:action="@{/add-route}" th:object="${routeForm}" method="post">
+		<div class="space-y-12">
+			<div class="border-b border-gray-900/10 pb-12">
+				<h2 class="text-base/7 font-semibold text-gray-900">Adaugă traseu</h2>
+				<p class="mt-1 text-sm/6 text-gray-600">Te rog introdu informațiile relevante</p>
+	
+				<div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+					<div class="sm:col-span-4">
+						<label for="zone-selector" class="block text-sm/6 font-medium text-gray-900">Zonă:</label>
+						<div class="mt-2">
+							<select id="zone-select" th:field="*{zone}" onchange="toggleZoneInput(this)" class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+								<option disabled value="" th:text="'Alege Zona'"></option>
+								<option th:each="zone : ${zones}" th:data-zone-id="${zoneStat.index}" th:value="${zone.getName}" th:text="${zone.getName}"></option>
+								<option value="new" class="font-semibold">Adaugă zonă nouă</option>
+							</select>
+						</div>
 					</div>
-				</div>
-
-				<div class="sm:col-span-4" id="new-zone-div" style="display: none;">
-					<label for="new-zone" class="block text-sm/6 font-medium text-gray-900">Nume zonă nouă:</label>
-					<div class="mt-2">
-						<input type="text" name="newZone" id="new-zone" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume zona...">
+	
+					<div class="sm:col-span-4" id="new-zone-div" style="display: none;">
+						<label for="new-zone" class="block text-sm/6 font-medium text-gray-900">Nume zonă nouă:</label>
+						<div class="mt-2">
+							<input type="text" name="newZone" id="new-zone" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume zona...">
+						</div>
 					</div>
-				</div>
-
-				<div th:if="${#lists.isEmpty(zones)}" class="sm:col-span-4">
-					<label for="sector-selector" class="block text-sm/6 font-medium text-gray-900">Sector:</label>
-					<div class="mt-2">
-						<select id="sector-select" th:field="*{sector}" onchange="toggleSectorInput(this)" class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-							<option disabled value="" th:text="'Alege sector'"></option>
-							<option th:each="sector : ${sectors}" th:value="${sector.getName}" th:text="${sector.getName}"></option>
-							<option value="new" class="font-semibold">Adaugă sector nou</option>
-						</select>
+	
+					<div th:if="${#lists.isEmpty(zones)}" class="sm:col-span-4">
+						<label for="sector-selector" class="block text-sm/6 font-medium text-gray-900">Sector:</label>
+						<div class="mt-2">
+							<select id="sector-select" th:field="*{sector}" onchange="toggleSectorInput(this)" class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+								<option disabled value="" th:text="'Alege sector'"></option>
+								<option th:each="sector : ${sectors}" th:value="${sector.getName}" th:text="${sector.getName}"></option>
+								<option value="new" class="font-semibold">Adaugă sector nou</option>
+							</select>
+						</div>
 					</div>
-				</div>
-
-				<div class="sm:col-span-4" id="new-sector-div" style="display: none;">
-					<label for="new-sector" class="block text-sm/6 font-medium text-gray-900">Nume sector nou:</label>
-					<div class="mt-2">
-						<input type="text" name="newSector" id="new-sector" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume sector...">
+	
+					<div class="sm:col-span-4" id="new-sector-div" style="display: none;">
+						<label for="new-sector" class="block text-sm/6 font-medium text-gray-900">Nume sector nou:</label>
+						<div class="mt-2">
+							<input type="text" name="newSector" id="new-sector" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume sector...">
+						</div>
 					</div>
-				</div>
-
-				<div class="sm:col-span-4">
-					<label for="name" class="block text-sm/6 font-medium text-gray-900">Numele rutei:</label>
-					<div class="mt-2">
-						<input type="text" name="name" id="name" th:field="*{name}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume traseu...">
+	
+					<div class="sm:col-span-4">
+						<label for="name" class="block text-sm/6 font-medium text-gray-900">Numele rutei:</label>
+						<div class="mt-2">
+							<input type="text" name="name" id="name" th:field="*{name}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume traseu...">
+						</div>
 					</div>
-				</div>
-
-				<div class="sm:col-span-4">
-					<label for="difficulty" class="block text-sm/6 font-medium text-gray-900">Dificultate rutei:</label>
-					<div class="mt-2">
-						<select id="difficulty" th:field="*{difficulty}" class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-							<option value="" disabled selected>Selectează dificultatea</option>
-							<option value="5a">5a</option>
-							<option value="5b">5b</option>
-							<option value="5c">5c</option>
-							<option value="6a">6a</option>
-							<option value="6a+">6a+</option>
-							<option value="6b">6b</option>
-							<option value="6b+">6b+</option>
-							<option value="6c">6c</option>
-							<option value="6c+">6c+</option>
-							<option value="7a">7a</option>
-							<option value="7a+">7a+</option>
-							<option value="7b">7b</option>
-							<option value="7b+">7b+</option>
-							<option value="7c">7c</option>
-							<option value="7c+">7c+</option>
-							<option value="8a">8a</option>
-						</select>
+	
+					<div class="sm:col-span-4">
+						<label for="difficulty" class="block text-sm/6 font-medium text-gray-900">Dificultate rutei:</label>
+						<div class="mt-2">
+							<select id="difficulty" th:field="*{difficulty}" class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+								<option value="" disabled selected>Selectează dificultatea</option>
+								<option value="5a">5a</option>
+								<option value="5b">5b</option>
+								<option value="5c">5c</option>
+								<option value="6a">6a</option>
+								<option value="6a+">6a+</option>
+								<option value="6b">6b</option>
+								<option value="6b+">6b+</option>
+								<option value="6c">6c</option>
+								<option value="6c+">6c+</option>
+								<option value="7a">7a</option>
+								<option value="7a+">7a+</option>
+								<option value="7b">7b</option>
+								<option value="7b+">7b+</option>
+								<option value="7c">7c</option>
+								<option value="7c+">7c+</option>
+								<option value="8a">8a</option>
+							</select>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-
-	<div class="mt-6 flex items-center justify-end gap-x-6">
-		<button type="submit"
-			class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
-	</div>
-</form>
+	
+		<div class="mt-6 flex items-center justify-end gap-x-6">
+			<button type="submit"
+				class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+		</div>
+	</form>
+</div>
 
 <script th:inline="javascript" defer>
 	const jsonData = /*[[${jsonData}]]*/ {};
