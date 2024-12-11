@@ -7,21 +7,19 @@
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-	<header class="bg-white">
-		<nav
-			class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
-			aria-label="Global">
-			<div class="flex gap-x-12">
-				<a href="/" class="text-sm/6 font-semibold text-gray-900">Home</a> 
-				<a href="/areas" class="text-sm/6 font-semibold text-gray-900">Zone de cățărat</a> 
-				<a href="/routes" class="text-sm/6 font-semibold text-gray-900">Ultimele trasee adăugate</a> 
-				<a href="/add-route" sec:authorize="isAuthenticated()" class="text-sm/6 font-semibold text-gray-900">Adaugă traseu</a>
-					
-				<a href="/login" sec:authorize="isAnonymous()" class="text-sm/6 font-semibold text-gray-900">Login</a>
-                <a href="/logout" sec:authorize="isAuthenticated()" class="text-sm/6 font-semibold text-gray-900">Logout</a>
-			
-			</div>
-		</nav>
+	<header class="sticky top-0 bg-gray-100 shadow-md z-50">
+	    <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+	        <div class="flex gap-x-8">
+	            <a href="/" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Home</a>
+	            <a href="/areas" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Zone de cățărat</a>
+	            <a href="/routes" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Ultimele trasee adăugate</a>
+	            <a href="/add-route" sec:authorize="isAuthenticated()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Adaugă traseu</a>
+	        </div>
+	        <div class="flex gap-x-4">
+	            <a href="/login" sec:authorize="isAnonymous()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Login</a>
+	            <a href="/logout" sec:authorize="isAuthenticated()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Logout</a>
+	        </div>
+	    </nav>
 	</header>
 	<main class="grid min-h-full bg-white px-6 py-10 sm:py-32 lg:px-8">
 		<div class="bg-white py-24 sm:py-32">
