@@ -82,8 +82,7 @@ public class RouteController {
 	}
 
 	@PostMapping("/add-route")
-	public String addRoute(@Valid RouteForm routeForm, BindingResult result, Model model)
-			throws JsonProcessingException {
+	public String addRoute(@Valid RouteForm routeForm, BindingResult result, Model model) throws JsonProcessingException {
 		boolean routeExists = routeService.routeExistsInSector(routeForm.getName(), routeForm.getSector());
 
 		if (result.hasErrors() || routeExists) {
@@ -91,6 +90,7 @@ public class RouteController {
 				result.rejectValue("name", "error.routeForm", "Ruta există deja în acest sector.");
 			}
 			populateModelForForm(model, routeForm, result.getAllErrors());
+			
 			return "main-layout";
 		}
 
@@ -102,19 +102,17 @@ public class RouteController {
 		if ("new".equals(zoneName) && newZone != null && !newZone.isBlank()) {
 			zoneName = newZone;
 		}
-
 		if ("new".equals(sectorName) && newSector != null && !newSector.isBlank()) {
 			sectorName = newSector;
 		}
 
-		Route route = new Route(routeForm.getName(), routeForm.getDifficulty());
+		Route route = new Route(routeForm.getName(), routeForm.getDifficulty(), routeForm.getLength(), routeForm.getQuickDraws(), routeForm.getRating());
 		routeService.addRoute(zoneName, sectorName, route);
 
 		return "redirect:/add-route";
 	}
 
-	private void populateModelForForm(Model model, RouteForm routeForm, List<ObjectError> errors)
-			throws JsonProcessingException {
+	private void populateModelForForm(Model model, RouteForm routeForm, List<ObjectError> errors) throws JsonProcessingException {
 		Collection<Zone> zones = routeService.getAllZones();
 		List<ZoneDTO> zoneDTOs = zones.stream().map(this::convertToZoneDTO).collect(Collectors.toList());
 
@@ -133,7 +131,7 @@ public class RouteController {
 		zone.getSectors().forEach(sector -> {
 			SectorDTO sectorDTO = new SectorDTO(sector.getName());
 			sector.getRoutes().forEach(route -> {
-				RouteDTO routeDTO = new RouteDTO(route.getName(), route.getDifficulty());
+				RouteDTO routeDTO = new RouteDTO(route.getName(), route.getDifficulty(), route.getLength(), route.getQuickDraws(), route.getRating());
 				sectorDTO.addRoute(routeDTO);
 			});
 			zoneDTO.addSector(sectorDTO);

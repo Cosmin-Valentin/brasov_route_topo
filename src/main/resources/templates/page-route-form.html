@@ -27,7 +27,7 @@
 					<div class="sm:col-span-4" id="new-zone-div" style="display: none;">
 						<label for="new-zone" class="block text-sm/6 font-medium text-gray-900">Nume zonă nouă:</label>
 						<div class="mt-2">
-							<input type="text" name="newZone" id="new-zone" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume zona...">
+							<input type="text" name="newZone" id="new-zone" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adaugă nume zona...">
 						</div>
 					</div>
 	
@@ -45,14 +45,14 @@
 					<div class="sm:col-span-4" id="new-sector-div" style="display: none;">
 						<label for="new-sector" class="block text-sm/6 font-medium text-gray-900">Nume sector nou:</label>
 						<div class="mt-2">
-							<input type="text" name="newSector" id="new-sector" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume sector...">
+							<input type="text" name="newSector" id="new-sector" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adaugă nume sector...">
 						</div>
 					</div>
 	
 					<div class="sm:col-span-4">
 						<label for="name" class="block text-sm/6 font-medium text-gray-900">Numele rutei:</label>
 						<div class="mt-2">
-							<input type="text" name="name" id="name" th:field="*{name}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adauga nume traseu...">
+							<input type="text" name="name" id="name" th:field="*{name}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adaugă nume traseu...">
 						</div>
 					</div>
 	
@@ -77,6 +77,38 @@
 								<option value="7c">7c</option>
 								<option value="7c+">7c+</option>
 								<option value="8a">8a</option>
+								<option value="8a+">8a+</option>
+								<option value="8b">8b</option>
+								<option value="8b+">8b+</option>
+								<option value="8c">8c</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="sm:col-span-4">
+						<label for="length" class="block text-sm/6 font-medium text-gray-900">Lungimea rutei:</label>
+						<div class="mt-2">
+							<input type="number" min="1" step="1" name="length" id="length" th:field="*{length}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adaugă lungime traseu...">
+						</div>
+					</div>
+					
+					<div class="sm:col-span-4">
+						<label for="quickDraws" class="block text-sm/6 font-medium text-gray-900">Număr bucle:</label>
+						<div class="mt-2">
+							<input type="number" min="1" step="1" name="quickDraws" id="quickDraws" th:field="*{quickDraws}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adaugă numărul de bucle necesar...">
+						</div>
+					</div>
+					
+					<div class="sm:col-span-4">
+						<label for="rating" class="block text-sm/6 font-medium text-gray-900">Frumusețea rutei:</label>
+						<div class="mt-2">
+							<select id="rating" th:field="*{rating}" class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+								<option value="" disabled selected>Selectează Frumusețea rutei</option>
+								<option value="1">1 stea</option>
+								<option value="2">2 stele</option>
+								<option value="3">3 stele</option>
+								<option value="4">4 stele</option>
+								<option value="5">5 stele</option>
 							</select>
 						</div>
 					</div>
