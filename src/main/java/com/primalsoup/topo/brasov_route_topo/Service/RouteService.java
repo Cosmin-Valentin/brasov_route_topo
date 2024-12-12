@@ -47,6 +47,10 @@ public class RouteService {
 	public List<Route> getAllRoutesSortedByDate() {
 		return routeRepository.findRoutesByCreatedAtDate();
 	}
+	
+	public void deleteRouteById(Long id) {
+	    routeRepository.deleteById(id);
+	}
 
 	@Transactional
 	public void addRoute(String zoneName, String sectorName, Route route) {

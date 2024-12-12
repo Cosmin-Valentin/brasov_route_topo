@@ -111,6 +111,12 @@ public class RouteController {
 
 		return "redirect:/add-route";
 	}
+	
+	@PostMapping("/remove-route")
+	public String removeRoute(Long id) {
+	    routeService.deleteRouteById(id);
+	    return "redirect:/routes";
+	}
 
 	private void populateModelForForm(Model model, RouteForm routeForm, List<ObjectError> errors) throws JsonProcessingException {
 		Collection<Zone> zones = routeService.getAllZones();
