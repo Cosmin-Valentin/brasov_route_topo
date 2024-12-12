@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Route Topo</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.tailwindcss.com"></script>
+    <title>Route Topo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-	<header class="sticky top-0 bg-gray-100 shadow-md z-50">
-	    <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-	        <div class="flex gap-x-8">
-	            <a href="/" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Home</a>
-	            <a href="/areas" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Zone de cățărat</a>
-	            <a href="/routes" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Ultimele trasee adăugate</a>
-	            <a href="/add-route" sec:authorize="isAuthenticated()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Adaugă traseu</a>
-	        </div>
-	        <div class="flex gap-x-4">
-	            <a href="/login" sec:authorize="isAnonymous()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Login</a>
-	            <a href="/logout" sec:authorize="isAuthenticated()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Logout</a>
-	        </div>
-	    </nav>
-	</header>
-	<main class="grid min-h-full bg-white px-6 py-10 lg:px-8">
-		<div th:replace="~{${body}}"></div>
-	</main>
+<body class="flex flex-col min-h-screen">
+    <header class="sticky top-0 bg-gray-100 shadow-md z-50">
+        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+            <div class="flex gap-x-8">
+                <a href="/" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Home</a>
+                <a href="/areas" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Zone de cățărat</a>
+                <a href="/routes" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Ultimele trasee adăugate</a>
+                <a href="/add-route" sec:authorize="isAuthenticated()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Adaugă traseu</a>
+            </div>
+            <div class="flex gap-x-4">
+                <a href="/login" sec:authorize="isAnonymous()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Login</a>
+                <a href="/logout" sec:authorize="isAuthenticated()" class="text-sm font-semibold text-gray-900 hover:text-gray-700">Logout</a>
+            </div>
+        </nav>
+    </header>
+    <main class="flex-grow bg-white px-6 py-6 lg:px-8">
+        <div th:replace="~{${body}}"></div>
+    </main>
+    <footer class="bg-gray-100 border-t border-gray-200 py-6">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <p class="text-center text-sm text-gray-600">
+                © 2024 <span class="font-semibold">Route Topo</span>. Toate drepturile rezervate.
+            </p>
+        </div>
+    </footer>
 </body>
 </html>
