@@ -39,6 +39,7 @@ public class RouteController {
 	public String getLatestRoutes(Model model) {
 		List<Route> routes = routeService.getAllRoutesSortedByDate();
 		model.addAttribute("routes", routes);
+		model.addAttribute("viewAll", true);
 		model.addAttribute("body", "page-routes");
 
 		return "main-layout";

@@ -16,8 +16,9 @@
 </div>
 
 <div th:unless="${#lists.isEmpty(routes)}" class="max-w-7xl px-6 lg:px-8">
-	<div class="mx-auto max-w-2xl lg:mx-0">
-		<h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Listă Trasee</h2>
+	<div class="mx-auto">
+		<h2 th:if="${viewAll}" class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Listă trasee recent adăugate</h2>
+		<h2 th:unless="${viewAll}" th:text="'Listă trasee din sectorul: ' + ${sector.getName}" class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl"></h2>
 		<p class="mt-2 text-lg/8 text-gray-600">Descriere</p>
 	</div>
 	<div class="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none">

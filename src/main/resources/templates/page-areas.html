@@ -21,10 +21,10 @@
 		</p>
 	</div>
 	<div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-		<div class="rounded-lg bg-gray-100 p-6 text-center shadow-md" th:each="zone : ${zones}">
+		<div th:each="zone : ${zones}" class="rounded-lg bg-slate-100 p-6 text-center shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out transform hover:scale-105">
 			<a th:href="@{/areas/{zoneId}(zoneId=${zone.id})}" class="block">
 				<h2 class="text-xl font-semibold text-gray-800" th:text="${zone.name}"></h2>
-				<p class="mt-2 text-gray-600 flex justify-evenly">
+				<p class="mt-2 text-gray-600 flex justify-evenly space-x-4">
 					<span th:text="'Sectoare: ' + ${zone.getSectorCount}"></span> 
 					<span th:text="'Trasee: ' + ${zone.getTotalRoutes}"></span>
 				</p>

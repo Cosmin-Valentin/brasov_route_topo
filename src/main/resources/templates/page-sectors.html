@@ -14,7 +14,7 @@
 	</div>
 	
 	<div th:if="${zone != null}" class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-		<div th:each="sector : ${zone.sectors}" class="rounded-lg bg-gray-100 p-6 text-center shadow-md">
+		<div th:each="sector : ${zone.sectors}" class="rounded-lg bg-slate-100 p-6 text-center shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out transform hover:scale-105">
 			<a th:href="@{/areas/{zoneId}/sectors/{sectorId}(zoneId=${zone.id}, sectorId=${sector.id})}" class="block">
 				<h2 class="text-xl font-semibold text-gray-800" th:text="${sector.name}"></h2>
 				<p class="mt-2 text-gray-600">
