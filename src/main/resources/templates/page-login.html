@@ -4,18 +4,27 @@
         <form th:action="@{/login}" method="post">
             <div class="mb-6">
                 <label for="username" class="block text-sm font-medium text-gray-600">Utilizator:</label>
-                <input type="text" id="username" name="username" required 
-                    class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-gray-50">
+                <input type="text" id="username" name="username" required class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-gray-50">
             </div>
             <div class="mb-6">
                 <label for="password" class="block text-sm font-medium text-gray-600">Parolă:</label>
-                <input type="password" id="password" name="password" required 
-                    class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-gray-50">
+                <input type="password" id="password" name="password" required class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-gray-50">
             </div>
-            <button type="submit" 
-                class="w-full py-3 px-4 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition">
+            <button type="submit" class="w-full py-3 px-4 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition">
                 Login
             </button>
         </form>
+         <button type="button" id="populateFields" class="mt-4 w-full py-3 px-4 bg-gray-200 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition">
+            Fill User Credentials
+        </button>
     </div>
 </div>
+
+<script defer>
+
+document.getElementById('populateFields').addEventListener('click', function() {
+	document.getElementById('username').value = 'utilizator';
+	document.getElementById('password').value = 'parola';
+});
+
+</script>
