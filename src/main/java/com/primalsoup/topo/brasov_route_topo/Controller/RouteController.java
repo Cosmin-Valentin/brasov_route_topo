@@ -1,5 +1,10 @@
 package com.primalsoup.topo.brasov_route_topo.Controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +16,8 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,7 +90,7 @@ public class RouteController {
 	}
 
 	@PostMapping("/add-route")
-	public String addRoute(@Valid RouteForm routeForm, BindingResult result, Model model) throws JsonProcessingException {
+	public String addRoute(@Valid RouteForm routeForm, @RequestParam("sectorImage") MultipartFile sectorImage, BindingResult result, Model model) throws JsonProcessingException {
 		boolean routeExists = routeService.routeExistsInSector(routeForm.getName(), routeForm.getSector());
 
 		if (result.hasErrors() || routeExists) {
@@ -105,6 +112,13 @@ public class RouteController {
 		}
 		if ("new".equals(sectorName) && newSector != null && !newSector.isBlank()) {
 			sectorName = newSector;
+			
+			try {
+				saveSectorImage(sectorName, sectorImage);
+			} catch (IOException e) {
+                model.addAttribute("error", "Failed to save sector image.");
+                return "page-route-form";
+            }
 		}
 
 		Route route = new Route(routeForm.getName(), routeForm.getDifficulty(), routeForm.getLength(), routeForm.getQuickDraws(), routeForm.getRating());
@@ -146,4 +160,24 @@ public class RouteController {
 
 		return zoneDTO;
 	}
+	
+	private void saveSectorImage(String sectorName, MultipartFile sectorImage) throws IOException {
+        if (sectorImage != null && !sectorImage.isEmpty()) {
+            String uploadDir = "src/main/resources/static/images";
+            String fileName = sectorName.replaceAll("\\s+", "_") + "." + getExtension(sectorImage.getOriginalFilename());
+
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Files.copy(sectorImage.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    private String getExtension(String fileName) {
+        if (fileName == null) return "jpg";
+        int dotIndex = fileName.lastIndexOf('.');
+        return (dotIndex == -1) ? "jpg" : fileName.substring(dotIndex + 1);
+    }
 }

@@ -10,7 +10,7 @@
                 <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
             </ul>
         </div>
-		<form action="#" th:action="@{/add-route}" th:object="${routeForm}" method="post">
+		<form action="#" th:action="@{/add-route}" th:object="${routeForm}" method="post" enctype="multipart/form-data">
 			<div class="pb-20">
 				<div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 					<div class="sm:col-span-4">
@@ -47,6 +47,11 @@
 						<div class="mt-2">
 							<input type="text" name="newSector" id="new-sector" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adaugă nume sector...">
 						</div>
+						
+						<label for="sector-image" class="block text-sm/6 font-medium text-gray-900 mt-4">Imagine sector:</label>
+					    <div class="mt-2">
+					        <input type="file" name="sectorImage" id="sector-image" class="block w-full text-gray-900 sm:text-sm/6" accept="image/*">
+					    </div>
 					</div>
 	
 					<div class="sm:col-span-4">
