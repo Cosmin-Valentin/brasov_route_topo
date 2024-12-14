@@ -137,7 +137,7 @@ public class RouteController {
 		List<ZoneDTO> zoneDTOs = zones.stream().map(this::convertToZoneDTO).collect(Collectors.toList());
 
 		String jsonData = objectMapper.writeValueAsString(zoneDTOs);
-
+		
 		model.addAttribute("zones", zones);
 		model.addAttribute("jsonData", jsonData);
 		model.addAttribute("routeForm", routeForm);
@@ -163,7 +163,7 @@ public class RouteController {
 	private void saveSectorImage(String sectorName, MultipartFile sectorImage) throws IOException {
         if (sectorImage != null && !sectorImage.isEmpty()) {
             String uploadDir = "src/main/resources/static/images";
-            String fileName = sectorName.replaceAll("\\s+", "_") + "." + getExtension(sectorImage.getOriginalFilename());
+            String fileName = sectorName.replaceAll("\\s+", " ") + "." + getExtension(sectorImage.getOriginalFilename());
 
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {

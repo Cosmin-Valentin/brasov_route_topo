@@ -1,7 +1,14 @@
 <div class="flex justify-center items-center min-h-screen bg-gray-50">
     <div class="bg-white p-10 rounded-lg shadow-xl w-full max-w-4xl">
         <h2 class="text-2xl font-semibold text-gray-800 mb-6">Adaugă traseu</h2>
-        <p class="text-sm text-gray-600 mb-8">Te rog introdu informațiile relevante</p>
+        <p th:unless="${#lists.isEmpty(zones)}" class="text-sm text-gray-600 mb-8">Te rog introdu informațiile relevante</p>
+        <div th:if="${#lists.isEmpty(zones)}" class="flex items-center gap-4 mb-8">
+		    <div>
+		    	<p class="text-sm text-gray-600">Te rog introdu informațiile relevante</p>
+		    	<p class="text-sm text-gray-600">Sau poți începe prin a popula baza de date cu câteva informații predefinite</p>
+		    </div>
+		    <button onclick="populateDatabase()" class="px-6 py-2 bg-gray-800 text-white rounded-lg shadow-md hover:bg-gray-700 focus:ring-2 focus:ring-gray-500">Apăsând aici</button>
+		</div>
 
         <div th:if="${errors != null && !errors.isEmpty()}" 
             class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-md mb-6" 
@@ -10,6 +17,7 @@
                 <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
             </ul>
         </div>
+        
 		<form action="#" th:action="@{/add-route}" th:object="${routeForm}" method="post" enctype="multipart/form-data">
 			<div class="pb-20">
 				<div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -215,5 +223,21 @@
 			
 		sectorDiv.innerHTML = sectorHtml;
 		newSectorDiv.parentNode.insertBefore(sectorDiv, newSectorDiv);
+	}
+	
+	function populateDatabase() {
+	    fetch('/populate-db')
+	        .then(response => {
+	            if (response.ok) {
+	                window.location.href = '/areas';
+	            } else {
+	                return response.text().then(errorMessage => {
+	                    throw new Error(errorMessage);
+	                });
+	            }
+	        })
+	        .catch(error => {
+	            alert('A apărut o problemă în timpul populării bazei de date. Te rog să repornesti aplicația.');
+	        });
 	}
 </script>

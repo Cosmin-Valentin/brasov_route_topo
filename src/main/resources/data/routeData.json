@@ -1,0 +1,55 @@
+[
+	{
+		"name": "Cheile Rasnoavei",
+		"sectors": [
+			{
+				"name": "Metal Expert",
+				"routes": [
+					{
+						"name": "Maseaua lucrata",
+						"difficulty": "6b",
+						"length": 16,
+						"quickDraws": 13,
+						"rating": 1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": "Zarnesti",
+		"sectors": [
+			{
+				"name": "Salvamont",
+				"routes": [
+					{
+						"name": "Fly",
+						"difficulty": "5a",
+						"length": 26,
+						"quickDraws": 13,
+						"rating": 1
+					},
+					{
+						"name": "Ecou",
+						"difficulty": "7c",
+						"length": 26,
+						"quickDraws": 23,
+						"rating": 1
+					}
+				]
+			},
+			{
+				"name": "Surplomba",
+				"routes": [
+					{
+						"name": "Highlander",
+						"difficulty": "5a",
+						"length": 15,
+						"quickDraws": 13,
+						"rating": 1
+					}
+				]
+			}
+		]
+	}
+]
