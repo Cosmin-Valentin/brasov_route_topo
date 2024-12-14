@@ -5,10 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-public class BrasovRouteTopoApplication {
+public class CosminNicola_BrasovRouteTopoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BrasovRouteTopoApplication.class, args);
+		SpringApplication.run(CosminNicola_BrasovRouteTopoApplication.class, args);
 	}
 
 }
