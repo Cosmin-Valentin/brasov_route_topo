@@ -28,7 +28,7 @@
                 <ul role="list" class="divide-y divide-gray-200">
                     <li class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-x-6 py-5" th:each="route : ${routes}">
                         <div class="flex flex-col mt-4 sm:mt-0 leading-normal flex-1">
-                            <p class="text-lg m-0 font-semibold text-gray-900" th:text="${route.getName}"></p>
+                            <p class="text-lg m-0 font-semibold text-gray-900" th:text="${route.getName} + ', ' + ${route.getDifficulty}"></p>
                             <p class="flex m-0 items-center mt-1 text-sm text-gray-500">
                                 <span th:text="'Frumusețe: '"></span>
                                 <span class="text-yellow-400 ml-1" th:each="i : ${#numbers.sequence(1, route.getRating)}">★</span>

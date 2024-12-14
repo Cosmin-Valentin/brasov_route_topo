@@ -4,8 +4,8 @@
         <p th:unless="${#lists.isEmpty(zones)}" class="text-sm text-gray-600 mb-8">Te rog introdu informațiile relevante</p>
         <div th:if="${#lists.isEmpty(zones)}" class="flex items-center gap-4 mb-8">
 		    <div>
-		    	<p class="text-sm text-gray-600">Te rog introdu informațiile relevante</p>
-		    	<p class="text-sm text-gray-600">Sau poți începe prin a popula baza de date cu câteva informații predefinite</p>
+		    	<p class="text-sm text-gray-600">Te rog introdu informațiile relevante sau...</p>
+		    	<p class="text-sm text-gray-600">Poți începe prin a popula baza de date cu câteva informații predefinite</p>
 		    </div>
 		    <button onclick="populateDatabase()" class="px-6 py-2 bg-gray-800 text-white rounded-lg shadow-md hover:bg-gray-700 focus:ring-2 focus:ring-gray-500">Apăsând aici</button>
 		</div>
