@@ -6,10 +6,13 @@
 	<div class="mx-auto max-w-7xl px-6 lg:px-8">
 		<div class="text-center">
 			<h1 class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
-				Welcome to the recently added page
+				Bine ai venit pe pagina traseelor recent adăugate
 			</h1>
 			<p class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
 				Ne pare rău, momentan nu par să existe trasee salvate. Încearcă să adaugi unul nou
+			</p>
+			<p sec:authorize="isAnonymous()" class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+				Pentru a avea acces la această funcționalitate te rog să te autentifici
 			</p>
 		</div>
 	</div>
@@ -41,23 +44,23 @@
                         
                         <div class="flex flex-col mt-4 sm:mt-0 sm:pt-2 leading-normal flex-1">
                             <p class="text-sm m-0 text-gray-600">
-                                <span class="font-medium text-gray-900">Zonă:</span> 
-                                <span th:text="${route.getSector.getZone.getName}"></span>
-                            </p>
-                            <p class="text-sm m-0 text-gray-600 mt-1">
-                                <span class="font-medium text-gray-900">Sector:</span> 
-                                <span th:text="${route.getSector.getName}"></span>
-                            </p>
-                        </div>
-                        
-                        <div class="flex flex-col mt-4 sm:mt-0 sm:pt-2 text-right leading-normal flex-1">
-                            <p class="text-sm m-0 text-gray-600">
                                 <span class="font-medium text-gray-900">Lungime:</span> 
                                 <span th:text="${route.getLength} + ' metri'"></span>
                             </p>
                             <p class="text-sm m-0 text-gray-600 mt-1">
                                 <span class="font-medium text-gray-900">Număr bucle:</span> 
                                 <span th:text="${route.getQuickDraws}"></span>
+                            </p>
+                        </div>
+                        
+                        <div class="flex flex-col mt-4 sm:mt-0 sm:pt-2 text-right leading-normal flex-1">
+                            <p class="text-sm m-0 text-gray-600">
+                                <span class="font-medium text-gray-900">Zonă:</span> 
+                                <span th:text="${route.getSector.getZone.getName}"></span>
+                            </p>
+                            <p class="text-sm m-0 text-gray-600 mt-1">
+                                <span class="font-medium text-gray-900">Sector:</span> 
+                                <span th:text="${route.getSector.getName}"></span>
                             </p>
                         </div>
                         
