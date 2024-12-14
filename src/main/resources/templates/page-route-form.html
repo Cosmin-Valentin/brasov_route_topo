@@ -38,7 +38,7 @@
 							<input type="text" name="newZone" id="new-zone" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6" required placeholder="Adaugă nume zona...">
 						</div>
 					</div>
-	
+					
 					<div th:if="${#lists.isEmpty(zones)}" class="sm:col-span-4">
 						<label for="sector-selector" class="block text-sm/6 font-medium text-gray-900">Sector:</label>
 						<div class="mt-2">
@@ -49,7 +49,7 @@
 							</select>
 						</div>
 					</div>
-	
+					
 					<div class="sm:col-span-4" id="new-sector-div" style="display: none;">
 						<label for="new-sector" class="block text-sm/6 font-medium text-gray-900">Nume sector nou:</label>
 						<div class="mt-2">
@@ -61,6 +61,8 @@
 					        <input type="file" name="sectorImage" id="sector-image" class="block w-full text-gray-900 sm:text-sm/6" accept="image/*">
 					    </div>
 					</div>
+					
+					<p class="sm:col-span-4 text-sm text-gray-500 italic" id="sector-image-prompt">* Imagini se pot adăuga numai sectoarelor noi</p>
 	
 					<div class="sm:col-span-4">
 						<label for="name" class="block text-sm/6 font-medium text-gray-900">Numele rutei:</label>
@@ -150,16 +152,19 @@
 	const newZoneInput = document.getElementById('new-zone');
 	const newSectorDiv = document.getElementById('new-sector-div');
 	const newSectorInput = document.getElementById('new-sector'); 
+	const sectorImagePrompt = document.getElementById('sector-image-prompt');
 
 	function toggleSectorInput(selectElement) {
 	    if (selectElement.value === 'new') {
 	        newSectorDiv.style.display = 'block';
 	        newSectorInput.required = true; 
 	        newSectorInput.value = '';
+	        sectorImagePrompt.style.display = 'none';
 	    } else {
 	        newSectorDiv.style.display = 'none';
 	        newSectorInput.required = false; 
 	        newSectorInput.value = selectElement.value;
+	        sectorImagePrompt.style.display = 'block';
 	    }
 	}
 	
@@ -181,6 +186,7 @@
 	document.addEventListener('DOMContentLoaded', () => {
 		if(zoneSelect.value === 'new') {
 			newZoneDiv.style.display = 'block';
+			sectorImagePrompt.style.display = 'none';
 		} else {
 			newZoneInput.value = zoneSelect.value;
 			createSectorSelect(zoneSelect);
@@ -219,7 +225,7 @@
 			});
 		} 
 		
-		sectorHtml += `<option value="new" class="font-semibold">Adauga sector nou</option></select></div>`;
+		sectorHtml += `<option value="new" class="font-semibold">Adaugă sector nou</option></select></div>`;
 			
 		sectorDiv.innerHTML = sectorHtml;
 		newSectorDiv.parentNode.insertBefore(sectorDiv, newSectorDiv);
