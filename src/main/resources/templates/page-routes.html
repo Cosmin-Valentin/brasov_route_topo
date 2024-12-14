@@ -75,9 +75,8 @@
             </div>
         </div>
 
-        <!-- Right-hand image section -->
         <div th:unless="${viewAll}" class="sector-card">
-            <img id="sector-image" th:src="@{'/images/' + ${sector.name} + '.png'}" alt="Sector Image" class="w-full object-cover rounded-lg">
+            <img id="sector-image" th:src="@{'/images/' + ${sector.name} + '.jpg'}" alt="Sector Image" class="w-full object-cover rounded-lg">
         </div>
     </div>
 </div>
