@@ -61,18 +61,43 @@
 	            </div>
 	            
 	            <div sec:authorize="isAuthenticated()" class="mt-2 sm:mt-0 sm:self-center flex-none">
-	                <form th:action="@{/remove-route}" method="post" th:object="${route}">
-	                    <input type="hidden" name="id" th:value="${route.getId}" />
-	                    <button type="submit" 
-	                        class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1">
-	                        Șterge
-	                    </button>
-	                </form>
-	            </div>
+                   <button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="removeRoute(this)" th:attr="data-id=${route.id}">Șterge</button>
+               	</div>
 	        </li>
 	    </ul>
 	</div>
 </div>
+
+<script defer>
+	function removeRoute(button) {
+	    const routeId = button.getAttribute("data-id");
+	    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+	    fetch('/remove-route', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/x-www-form-urlencoded',
+	            [csrfHeader]: csrfToken
+	        },
+	        body: new URLSearchParams({ id: routeId })
+	    })
+	    .then(response => {
+	        if (response.ok) {
+	            const routeItem = button.closest('li');
+	            if (routeItem) {
+	                routeItem.remove();
+	            }
+	        } else {
+	            alert('Failed to delete the route. Please try again.');
+	        }
+	    })
+	    .catch(error => {
+	        console.error('Error deleting route:', error);
+	        alert('An error occurred while deleting the route.');
+	    });
+	}
+</script>
 
 
 
