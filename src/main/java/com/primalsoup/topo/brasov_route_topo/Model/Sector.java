@@ -2,8 +2,13 @@ package com.primalsoup.topo.brasov_route_topo.Model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +33,10 @@ public class Sector {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "sector")
 	private List<Route> routes = new ArrayList<>();
 
+	@Column(columnDefinition = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
+	private Map<String, Object> routeDrawingData;
+	
 	public Sector() {
 	}
 
@@ -75,6 +84,14 @@ public class Sector {
 	public int getRouteCount() {
 		return this.routes.size();
 	}
+	
+	public Map<String, Object> getRouteDrawingData() {
+        return routeDrawingData;
+    }
+
+    public void setRouteDrawingData(Map<String, Object> routeDrawingData) {
+        this.routeDrawingData = routeDrawingData;
+    }
 
 	@Override
 	public boolean equals(Object o) {

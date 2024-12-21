@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,6 +64,7 @@ public class RouteController {
 		model.addAttribute("zone", zone);
 		model.addAttribute("sector", sector);
 		model.addAttribute("routes", sector.getRoutes());
+		model.addAttribute("routeDrawingData", sector.getRouteDrawingData());
 		model.addAttribute("body", "page-routes");
 
 		return "main-layout";
@@ -138,6 +141,18 @@ public class RouteController {
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
+	}
+	
+	@PostMapping("/areas/{zoneId}/sectors/{sectorId}/saveRouteDrawings")
+	public ResponseEntity<Void> saveRouteDrawings(
+	    @PathVariable Long zoneId,
+	    @PathVariable Long sectorId,
+	    @RequestBody Map<String, Object> routeDrawingData) {
+
+	    Sector sector = routeService.getSectorById(sectorId);
+	    routeService.saveRouteDrawings(sector, routeDrawingData); 
+	    
+	    return ResponseEntity.ok().build();
 	}
 
 	private void populateModelForForm(Model model, RouteForm routeForm, List<ObjectError> errors) throws JsonProcessingException {

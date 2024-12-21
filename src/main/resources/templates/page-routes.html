@@ -79,6 +79,7 @@
 		    <img id="sector-image" th:src="@{'/images/' + ${sector.name} + '.jpg'}" alt="Sector Image" class="w-full object-cover rounded-lg">
 		    <canvas id="drawing-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
 		</div>
+      	<button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="saveRouteDrawings()">Salveaza?</button>
     </div>
     
     <div id="notification" class="hidden fixed bottom-4 right-4 bg-orange-500 bg-opacity-90 text-white text-sm font-medium px-4 py-3 rounded-lg shadow-lg transition-opacity duration-500">
@@ -88,9 +89,25 @@
 
 <script defer>
 	
+	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	
+	
+	
 	document.addEventListener('DOMContentLoaded', () => {
 		loadImage();
 	});
+	
+	
+	var routeDrawingData = JSON.stringify('[[${routeDrawingData}]]');
+   	let sectorDrawings = {}; 
+   	
+	/* if (routeDrawingData) {
+		sectorDrawings = routeDrawingData;
+		Object.keys(sectorDrawings).forEach(function(id) {
+		    redrawRoute(sectorDrawings[id])
+		});
+	} */
 	
 	function loadImage() {
 		const img = document.getElementById('sector-image');
@@ -110,6 +127,8 @@
 	    }
 	}
 	
+ 
+	
 	function loadCanvas() {
 	    const canvas = document.getElementById('drawing-canvas');
 	    const ctx = canvas.getContext('2d');
@@ -119,7 +138,6 @@
 	    let currentRoute = null;
 	    let currentRouteNr = null;
 	    let drawnRoutes = {};
-	    let routeDrawings = {}; // Store drawing data for each route
 
 	    function resizeCanvas() {
 	        canvas.width = image.offsetWidth;
@@ -155,12 +173,12 @@
 	        ctx.fillText(`${currentRouteNr}`, circleX, circleY);
 
 	        // Initialize drawing data for this route
-	        if (!routeDrawings[currentRoute]) {
-	            routeDrawings[currentRoute] = { points: [], bubble: { x: circleX, y: circleY, radius: circleRadius, number: currentRouteNr } };
+	        if (!sectorDrawings[currentRoute]) {
+	        	sectorDrawings[currentRoute] = { points: [], bubble: { x: circleX, y: circleY, radius: circleRadius, number: currentRouteNr } };
 	        }
 
 	        // Save the starting point of the line
-	        routeDrawings[currentRoute].points.push({ type: 'start', x: circleX, y: circleY - circleRadius - 10 });
+	        sectorDrawings[currentRoute].points.push({ type: 'start', x: circleX, y: circleY - circleRadius - 10 });
 
 	        ctx.beginPath();
 	        ctx.moveTo(circleX, circleY - circleRadius - 10);
@@ -175,7 +193,7 @@
 	        ctx.stroke();
 
 	        // Save line segment
-	        routeDrawings[currentRoute].points.push({ type: 'line', x: e.offsetX, y: e.offsetY });
+	        sectorDrawings[currentRoute].points.push({ type: 'line', x: e.offsetX, y: e.offsetY });
 	    });
 
 	    canvas.addEventListener('mouseup', () => {
@@ -187,9 +205,9 @@
 
 	    // Function to redraw saved lines and their bubbles for a route
 	    function redrawRoute(routeId) {
-	        if (!routeDrawings[routeId]) return;
+	        if (!sectorDrawings[routeId]) return;
 
-	        const { points, bubble } = routeDrawings[routeId];
+	        const { points, bubble } = sectorDrawings[routeId];
 
 	        // Draw the bubble
 	        ctx.beginPath();
@@ -221,15 +239,16 @@
 	        });
 	        ctx.closePath();
 	    }
+	    window.redrawRoute = redrawRoute;
 
 	    // Function to delete a route's drawing
 	    window.deleteRouteDrawing = (routeId, routeNr) => {
-	        if (routeDrawings[routeId]) {
-	            delete routeDrawings[routeId];
+	        if (sectorDrawings[routeId]) {
+	            delete sectorDrawings[routeId];
 	            drawnRoutes[routeId] = false;
 	            ctx.clearRect(0, 0, canvas.width, canvas.height);
 	            // Redraw all other routes
-	            Object.keys(routeDrawings).forEach(redrawRoute);
+	            Object.keys(sectorDrawings).forEach(redrawRoute);
 	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.add('hidden');
 	            document.querySelector(`.drawing-toggle-btn[data-id='${routeId}']`).classList.remove('hidden');
 	            showNotification(`Linia traseului ${routeNr} a fost ștearsă`);
@@ -305,10 +324,31 @@
         }
     }
 	
+	function saveRouteDrawings() {
+		const path = window.location.pathname;
+	    fetch(`${path}/saveRouteDrawings`, {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	            [csrfHeader]: csrfToken
+	        },
+	        body: JSON.stringify(sectorDrawings)
+	    })
+	    .then(response => {
+	        if (response.ok) {
+	            showNotification('Data saved successfully.');
+	        } else {
+	            showNotification('Failed to save route drawing.');
+	        }
+	    })
+	    .catch(error => {
+	        console.error('Error saving route drawing:', error);
+	    });
+	        console.log(JSON.stringify(sectorDrawings));
+	}
+	
 	function removeRoute(button) {
 	    const routeId = button.getAttribute("data-id");
-	    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-	    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
 	    fetch('/remove-route', {
 	        method: 'POST',
