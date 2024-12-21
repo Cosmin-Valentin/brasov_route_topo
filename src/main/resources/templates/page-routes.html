@@ -26,7 +26,10 @@
             
             <div class="mt-10 grid grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none">
                 <ul role="list" class="divide-y divide-gray-200">
-                    <li class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-x-6 py-5" th:each="route : ${routes}">
+                    <li class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-x-6 py-5" th:each="route, stat : ${routes}">
+						<span class="flex items-center justify-center w-6 h-6 text-black font-medium bg-gray-200 rounded-full">
+						    <span th:text="${stat.index + 1} + '.'"></span>
+						</span>         
                         <div class="flex flex-col mt-4 sm:mt-0 leading-normal flex-1">
                             <p class="text-lg m-0 font-semibold text-gray-900" th:text="${route.getName} + ', ' + ${route.getDifficulty}"></p>
                             <p class="flex m-0 items-center mt-1 text-sm text-gray-500">
@@ -59,10 +62,13 @@
                         </div>
                         
                         <div sec:authorize="isAuthenticated()" class="mt-2 sm:mt-0 sm:self-center flex-none">
-                            <button type="button" class="hidden drawing-toggle-btn px-2 py-1 text-xs font-medium text-orange-600 bg-orange-50 rounded shadow-sm hover:bg-orange-100 focus:outline-none focus:ring-1 focus:ring-orange-200 focus:ring-offset-1" onclick="toggleDrawing(this)" th:attr="data-id=${route.id}">
+                            <button type="button" class="hidden drawing-toggle-btn px-2 py-1 text-xs font-medium text-orange-600 bg-orange-50 rounded shadow-sm hover:bg-orange-100 focus:outline-none focus:ring-1 focus:ring-orange-200 focus:ring-offset-1" onclick="toggleDrawing(this)" th:data-route-nr="${stat.index + 1}" th:attr="data-id=${route.id}">
 						        Trasează linia
 						    </button>
-                            <button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="removeRoute(this)" th:attr="data-id=${route.id}">Șterge</button>
+						    <button type="button" class="hidden delete-drawing-btn px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" th:onclick="|deleteRouteDrawing(${route.id}, ${stat.index + 1})|" th:attr="data-id=${route.id}">
+						        Șterge linia
+						    </button>
+                           <!--/* <button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="removeRoute(this)" th:attr="data-id=${route.id}">Șterge</button> */-->
                         </div>
                     </li>
                 </ul>
@@ -105,14 +111,16 @@
 	}
 	
 	function loadCanvas() {
-		const canvas = document.getElementById('drawing-canvas');
+	    const canvas = document.getElementById('drawing-canvas');
 	    const ctx = canvas.getContext('2d');
 	    const image = document.getElementById('sector-image');
 	    let drawingEnabled = false;
 	    let isDrawing = false;
 	    let currentRoute = null;
+	    let currentRouteNr = null;
 	    let drawnRoutes = {};
-	    
+	    let routeDrawings = {}; // Store drawing data for each route
+
 	    function resizeCanvas() {
 	        canvas.width = image.offsetWidth;
 	        canvas.height = image.offsetHeight;
@@ -121,57 +129,145 @@
 	    }
 	    resizeCanvas();
 	    window.addEventListener('resize', resizeCanvas);
-	    
+
 	    canvas.addEventListener('mousedown', (e) => {
 	        if (!drawingEnabled || !currentRoute) return;
 	        isDrawing = true;
+
+	        const circleRadius = 12;
+	        const circleX = e.offsetX;
+	        const circleY = e.offsetY + circleRadius + 5;
+
+	        // Draw the route number bubble
 	        ctx.beginPath();
-	        ctx.moveTo(e.offsetX, e.offsetY);
+	        ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+	        ctx.fillStyle = 'white';
+	        ctx.fill();
+	        ctx.strokeStyle = 'orange';
+	        ctx.lineWidth = 2;
+	        ctx.stroke();
+	        ctx.closePath();
+
+	        ctx.font = '18px Arial';
+	        ctx.fillStyle = 'orange';
+	        ctx.textAlign = 'center';
+	        ctx.textBaseline = 'middle';
+	        ctx.fillText(`${currentRouteNr}`, circleX, circleY);
+
+	        // Initialize drawing data for this route
+	        if (!routeDrawings[currentRoute]) {
+	            routeDrawings[currentRoute] = { points: [], bubble: { x: circleX, y: circleY, radius: circleRadius, number: currentRouteNr } };
+	        }
+
+	        // Save the starting point of the line
+	        routeDrawings[currentRoute].points.push({ type: 'start', x: circleX, y: circleY - circleRadius - 10 });
+
+	        ctx.beginPath();
+	        ctx.moveTo(circleX, circleY - circleRadius - 10);
 	    });
-	    
+
 	    canvas.addEventListener('mousemove', (e) => {
 	        if (!isDrawing) return;
+
 	        ctx.lineTo(e.offsetX, e.offsetY);
 	        ctx.strokeStyle = 'orange';
 	        ctx.lineWidth = 3;
 	        ctx.stroke();
+
+	        // Save line segment
+	        routeDrawings[currentRoute].points.push({ type: 'line', x: e.offsetX, y: e.offsetY });
 	    });
-	    
+
 	    canvas.addEventListener('mouseup', () => {
 	        if (drawingEnabled && currentRoute) {
 	            drawnRoutes[currentRoute] = true;
 	        }
 	        isDrawing = false;
 	    });
-	    
+
+	    // Function to redraw saved lines and their bubbles for a route
+	    function redrawRoute(routeId) {
+	        if (!routeDrawings[routeId]) return;
+
+	        const { points, bubble } = routeDrawings[routeId];
+
+	        // Draw the bubble
+	        ctx.beginPath();
+	        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+	        ctx.fillStyle = 'white';
+	        ctx.fill();
+	        ctx.strokeStyle = 'orange';
+	        ctx.lineWidth = 2;
+	        ctx.stroke();
+	        ctx.closePath();
+
+	        ctx.font = '18px Arial';
+	        ctx.fillStyle = 'orange';
+	        ctx.textAlign = 'center';
+	        ctx.textBaseline = 'middle';
+	        ctx.fillText(`${bubble.number}`, bubble.x, bubble.y);
+
+	        // Redraw the route
+	        ctx.beginPath();
+	        points.forEach((point) => {
+	            if (point.type === 'start') {
+	                ctx.moveTo(point.x, point.y);
+	            } else if (point.type === 'line') {
+	                ctx.lineTo(point.x, point.y);
+	                ctx.strokeStyle = 'orange';
+	                ctx.lineWidth = 3;
+	                ctx.stroke();
+	            }
+	        });
+	        ctx.closePath();
+	    }
+
+	    // Function to delete a route's drawing
+	    window.deleteRouteDrawing = (routeId, routeNr) => {
+	        if (routeDrawings[routeId]) {
+	            delete routeDrawings[routeId];
+	            drawnRoutes[routeId] = false;
+	            ctx.clearRect(0, 0, canvas.width, canvas.height);
+	            // Redraw all other routes
+	            Object.keys(routeDrawings).forEach(redrawRoute);
+	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.add('hidden');
+	            document.querySelector(`.drawing-toggle-btn[data-id='${routeId}']`).classList.remove('hidden');
+	            showNotification(`Linia traseului ${routeNr} a fost ștearsă`);
+	        }
+	    };
+
 	    document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
-           btn.classList.remove('hidden');
-        });
-	    
+	        btn.classList.remove('hidden');
+	    });
+
 	    window.toggleDrawing = (button) => {
 	        const routeId = button.getAttribute('data-id');
-	    
+	        const routeNr = button.getAttribute('data-route-nr');
+
 	        if (currentRoute && currentRoute !== routeId) {
 	            return;
 	        }
-	    
+
 	        if (drawingEnabled) {
 	            drawingEnabled = false;
 	            currentRoute = null;
+	            currentRouteNr = null;
 	            button.textContent = 'Trasează linia';
 	            button.classList.remove('bg-green-50', 'text-green-600', 'hover:bg-green-100', 'focus:ring-green-200');
-	            button.classList.add('bg-orange-50', 'text-orange-600', 'hover:bg-orange-100', 'focus:ring-orange-200');
+	            button.classList.add('hidden', 'bg-orange-50', 'text-orange-600', 'hover:bg-orange-100', 'focus:ring-orange-200');
 	            document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
 	                btn.removeAttribute("disabled");
 	            });
+	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.remove('hidden');
 	            showNotification('Funcție desen oprită');
 	        } else {
 	            if (drawnRoutes[routeId]) {
 	                showNotification('Linia traseului este deja salvată');
 	                return;
 	            }
-	    
+
 	            currentRoute = routeId;
+	            currentRouteNr = routeNr;
 	            drawingEnabled = true;
 	            button.textContent = 'Salvează linia';
 	            button.classList.remove('bg-orange-50', 'text-orange-600', 'hover:bg-orange-100', 'focus:ring-orange-200');
