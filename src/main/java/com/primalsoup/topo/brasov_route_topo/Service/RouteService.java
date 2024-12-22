@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.primalsoup.topo.brasov_route_topo.Model.Route;
 import com.primalsoup.topo.brasov_route_topo.Model.Sector;
 import com.primalsoup.topo.brasov_route_topo.Model.Zone;
@@ -21,6 +23,8 @@ public class RouteService {
 	private final RouteRepository routeRepository;
 	private final ZoneRepository zoneRepository;
 	private final SectorRepository sectorRepository;
+	
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public RouteService(RouteRepository routeRepository, ZoneRepository zoneRepository,
 			SectorRepository sectorRepository) {
@@ -84,7 +88,13 @@ public class RouteService {
 	}
 	
 	public void saveRouteDrawings(Sector sector, Map<String, Object> routeDrawingData) {
-	    sector.setRouteDrawingData(routeDrawingData);  
+		try {
+            String jsonData = objectMapper.writeValueAsString(routeDrawingData);
+            sector.setRouteDrawingData(jsonData);  
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error serializing route data", e);
+        }
+	    
 	    sectorRepository.save(sector); 
 	}
 

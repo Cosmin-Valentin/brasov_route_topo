@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
@@ -33,9 +30,11 @@ public class Sector {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "sector")
 	private List<Route> routes = new ArrayList<>();
 
-	@Column(columnDefinition = "json")
-    @JdbcTypeCode(SqlTypes.JSON)
-	private Map<String, Object> routeDrawingData;
+//	@Column(columnDefinition = "json")
+//    @JdbcTypeCode(SqlTypes.JSON)
+//	private Map<String, Object> routeDrawingData;
+	@Lob
+	private String routeDrawingData;
 	
 	public Sector() {
 	}
@@ -85,11 +84,11 @@ public class Sector {
 		return this.routes.size();
 	}
 	
-	public Map<String, Object> getRouteDrawingData() {
+	public String getRouteDrawingData() {
         return routeDrawingData;
     }
 
-    public void setRouteDrawingData(Map<String, Object> routeDrawingData) {
+    public void setRouteDrawingData(String routeDrawingData) {
         this.routeDrawingData = routeDrawingData;
     }
 

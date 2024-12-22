@@ -65,7 +65,7 @@
                             <button type="button" class="hidden drawing-toggle-btn px-2 py-1 text-xs font-medium text-orange-600 bg-orange-50 rounded shadow-sm hover:bg-orange-100 focus:outline-none focus:ring-1 focus:ring-orange-200 focus:ring-offset-1" onclick="toggleDrawing(this)" th:data-route-nr="${stat.index + 1}" th:attr="data-id=${route.id}">
 						        Trasează linia
 						    </button>
-						    <button type="button" class="hidden delete-drawing-btn px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" th:onclick="|deleteRouteDrawing(${route.id}, ${stat.index + 1})|" th:attr="data-id=${route.id}">
+						    <button type="button" class="hidden delete-drawing-btn px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" th:onclick="|deleteRouteDrawing(${route.id}, ${stat.index + 1})|" th:data-route-nr="${stat.index + 1}" th:attr="data-id=${route.id}">
 						        Șterge linia
 						    </button>
                            <!--/* <button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="removeRoute(this)" th:attr="data-id=${route.id}">Șterge</button> */-->
@@ -79,7 +79,7 @@
 		    <img id="sector-image" th:src="@{'/images/' + ${sector.name} + '.jpg'}" alt="Sector Image" class="w-full object-cover rounded-lg">
 		    <canvas id="drawing-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
 		</div>
-      	<button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="saveRouteDrawings()">Salveaza?</button>
+      	<!-- <button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="saveRouteDrawings()">Salveaza?</button> -->
     </div>
     
     <div id="notification" class="hidden fixed bottom-4 right-4 bg-orange-500 bg-opacity-90 text-white text-sm font-medium px-4 py-3 rounded-lg shadow-lg transition-opacity duration-500">
@@ -91,23 +91,11 @@
 	
 	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 	const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-	
-	
+   	let sectorDrawings = {}; 
 	
 	document.addEventListener('DOMContentLoaded', () => {
 		loadImage();
 	});
-	
-	
-	var routeDrawingData = JSON.stringify('[[${routeDrawingData}]]');
-   	let sectorDrawings = {}; 
-   	
-	/* if (routeDrawingData) {
-		sectorDrawings = routeDrawingData;
-		Object.keys(sectorDrawings).forEach(function(id) {
-		    redrawRoute(sectorDrawings[id])
-		});
-	} */
 	
 	function loadImage() {
 		const img = document.getElementById('sector-image');
@@ -138,7 +126,7 @@
 	    let currentRoute = null;
 	    let currentRouteNr = null;
 	    let drawnRoutes = {};
-
+	    
 	    function resizeCanvas() {
 	        canvas.width = image.offsetWidth;
 	        canvas.height = image.offsetHeight;
@@ -147,6 +135,30 @@
 	    }
 	    resizeCanvas();
 	    window.addEventListener('resize', resizeCanvas);
+	    
+	    document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
+	        btn.classList.remove('hidden');
+	    });
+	    
+	    let routeDrawingData = '[[${routeDrawingData}]]';
+	    if(routeDrawingData) {
+	    	routeDrawingData = decodeDrawingData('[[${routeDrawingData}]]');
+		    
+		    if (typeof routeDrawingData === 'object') {
+		    	sectorDrawings = routeDrawingData;
+		    	Object.keys(sectorDrawings).forEach(id => {
+		    		const routeNr = sectorDrawings[id].bubble.number;
+		    		redrawRoute(id);
+		    		document.querySelector(`.delete-drawing-btn[data-route-nr='${routeNr}']`).classList.remove('hidden');
+		            document.querySelector(`.drawing-toggle-btn[data-route-nr='${routeNr}']`).classList.add('hidden'); 
+		    	});
+		    	
+		    } else {
+		        showNotification('Eroare la adăugarea liniilor existente');
+		    	console.error('Type of routeDrawingData:', typeof routeDrawingData);
+		    } 
+	    }
+	    
 
 	    canvas.addEventListener('mousedown', (e) => {
 	        if (!drawingEnabled || !currentRoute) return;
@@ -239,7 +251,6 @@
 	        });
 	        ctx.closePath();
 	    }
-	    window.redrawRoute = redrawRoute;
 
 	    // Function to delete a route's drawing
 	    window.deleteRouteDrawing = (routeId, routeNr) => {
@@ -252,12 +263,9 @@
 	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.add('hidden');
 	            document.querySelector(`.drawing-toggle-btn[data-id='${routeId}']`).classList.remove('hidden');
 	            showNotification(`Linia traseului ${routeNr} a fost ștearsă`);
+	            saveRouteDrawings();
 	        }
 	    };
-
-	    document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
-	        btn.classList.remove('hidden');
-	    });
 
 	    window.toggleDrawing = (button) => {
 	        const routeId = button.getAttribute('data-id');
@@ -266,7 +274,7 @@
 	        if (currentRoute && currentRoute !== routeId) {
 	            return;
 	        }
-
+	        
 	        if (drawingEnabled) {
 	            drawingEnabled = false;
 	            currentRoute = null;
@@ -278,7 +286,8 @@
 	                btn.removeAttribute("disabled");
 	            });
 	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.remove('hidden');
-	            showNotification('Funcție desen oprită');
+	            saveRouteDrawings();
+	            showNotification(`Linia traseului ${routeNr} a fost salvată`);
 	        } else {
 	            if (drawnRoutes[routeId]) {
 	                showNotification('Linia traseului este deja salvată');
@@ -335,16 +344,13 @@
 	        body: JSON.stringify(sectorDrawings)
 	    })
 	    .then(response => {
-	        if (response.ok) {
-	            showNotification('Data saved successfully.');
-	        } else {
+	        if (!response.ok) {
 	            showNotification('Failed to save route drawing.');
 	        }
 	    })
 	    .catch(error => {
 	        console.error('Error saving route drawing:', error);
 	    });
-	        console.log(JSON.stringify(sectorDrawings));
 	}
 	
 	function removeRoute(button) {
@@ -365,13 +371,28 @@
 	                routeItem.remove();
 	            }
 	        } else {
-	            alert('Failed to delete the route. Please try again.');
+	        	showNotification('Failed to delete the route. Please try again.');
 	        }
 	    })
 	    .catch(error => {
 	        console.error('Error deleting route:', error);
-	        alert('An error occurred while deleting the route.');
+	        showNotification('An error occurred while deleting the route.');
 	    });
+	}
+	
+	function decodeDrawingData(data) {
+		const cleanData = data
+		  .replace(/&quot;/g, '"') 
+		  .replace(/&amp;/g, '&')  
+		  .replace(/&#39;/g, "'")  
+		  .replace(/&lt;/g, '<')  
+		  .replace(/&gt;/g, '>');
+		
+		try {
+			return JSON.parse(cleanData);
+		} catch (error) {
+		  	console.error("Failed to parse JSON:", routeDrawingData);
+		}
 	}
 </script>
 
