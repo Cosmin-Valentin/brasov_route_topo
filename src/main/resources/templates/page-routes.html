@@ -115,8 +115,6 @@
 	    }
 	}
 	
- 
-	
 	function loadCanvas() {
 	    const canvas = document.getElementById('drawing-canvas');
 	    const ctx = canvas.getContext('2d');
@@ -285,6 +283,9 @@
 	            document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
 	                btn.removeAttribute("disabled");
 	            });
+	            document.querySelectorAll('.delete-drawing-btn').forEach((btn) => {
+	                btn.removeAttribute("disabled");
+	            });
 	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.remove('hidden');
 	            saveRouteDrawings();
 	            showNotification(`Linia traseului ${routeNr} a fost salvată`);
@@ -304,6 +305,9 @@
 	                if (btn !== button) {
 	                    btn.setAttribute("disabled", "true");
 	                }
+	            });
+	            document.querySelectorAll('.delete-drawing-btn').forEach((btn) => {
+                    btn.setAttribute("disabled", "true");
 	            });
 	            showNotification('Trasează linia traseului', true);
 	        }
