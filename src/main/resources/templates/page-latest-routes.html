@@ -1,103 +1,72 @@
 <div th:unless="${#lists.isEmpty(routes)}" class="pb-10">
-	<div th:replace="fragments/breadcrumbs :: breadcrumbContent"></div>
+    <div th:replace="fragments/breadcrumbs :: breadcrumbContent"></div>
 </div>
 
-<div th:if="${#lists.isEmpty(routes)}" class="bg-white py-24 sm:py-32">
-	<div class="mx-auto max-w-7xl px-6 lg:px-8">
-		<div class="text-center">
-			<h1 class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
-				Bine ai venit pe pagina traseelor recent adăugate
-			</h1>
-			<p class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
-				Ne pare rău, momentan nu par să existe trasee salvate. Încearcă să adaugi unul nou
-			</p>
-			<p sec:authorize="isAnonymous()" class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
-				Pentru a avea acces la această funcționalitate te rog să te autentifici
-			</p>
-		</div>
-	</div>
+<div th:if="${#lists.isEmpty(routes)}" class="bg-white py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-4xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
+                Bine ai venit pe pagina traseelor recent adăugate
+            </h1>
+            <p class="mt-6 text-lg text-gray-500 sm:text-xl">
+                Ne pare rău, momentan nu par să existe trasee salvate. Încearcă să adaugi unul nou.
+            </p>
+            <p sec:authorize="isAnonymous()" class="mt-6 text-lg text-gray-500 sm:text-xl">
+                Pentru a avea acces la această funcționalitate te rog să te autentifici.
+            </p>
+        </div>
+    </div>
 </div>
 
-<div th:unless="${#lists.isEmpty(routes)}" class="max-w-7xl px-6 lg:px-8">
-	<div class="mx-auto">
-	    <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-	        Listă trasee recent adăugate
-	    </h2>
-	    <p th:text="'Avem un total de ' + ${routes.size} + ' rute adăugate până în prezent'" class="mt-2 text-lg text-gray-600"></p>
-	</div>
-	
-	<div class="mt-10 grid grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none">
-	    <ul role="list" class="divide-y divide-gray-200">
-	        <li class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-x-6 py-5" th:each="route : ${routes}">
-	            <div class="flex flex-col mt-4 sm:mt-0 leading-normal flex-1">
-	                <p class="text-lg m-0 font-semibold text-gray-900" th:text="${route.getName}"></p>
-	                <p class="flex m-0 items-center mt-1 text-sm text-gray-500">
-	                    <span th:text="'Frumusețe: '"></span>
-	                    <span class="text-yellow-400 ml-1" th:each="i : ${#numbers.sequence(1, route.getRating)}">★</span>
-	                    <span class="ml-2 text-gray-500" th:text="'(' + ${route.getRating} + ' stele)'"></span>
-	                </p>
-	            </div>
-	            
-	            <div class="flex flex-col mt-4 sm:mt-0 sm:pt-2 leading-normal flex-1">
-	                <p class="text-sm m-0 text-gray-600">
-	                    <span class="font-medium text-gray-900">Lungime:</span> 
-	                    <span th:text="${route.getLength} + ' metri'"></span>
-	                </p>
-	                <p class="text-sm m-0 text-gray-600 mt-1">
-	                    <span class="font-medium text-gray-900">Număr bucle:</span> 
-	                    <span th:text="${route.getQuickDraws}"></span>
-	                </p>
-	            </div>
-	            
-	            <div class="flex flex-col mt-4 sm:mt-0 sm:pt-2 text-right leading-normal flex-1">
-	                <p class="text-sm m-0 text-gray-600">
-	                    <span class="font-medium text-gray-900">Zonă:</span> 
-	                    <span th:text="${route.getSector.getZone.getName}"></span>
-	                </p>
-	                <p class="text-sm m-0 text-gray-600 mt-1">
-	                    <span class="font-medium text-gray-900">Sector:</span> 
-	                    <span th:text="${route.getSector.getName}"></span>
-	                </p>
-	            </div>
-	            
-	            <div sec:authorize="isAuthenticated()" class="mt-2 sm:mt-0 sm:self-center flex-none">
-                   <button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="removeRoute(this)" th:attr="data-id=${route.id}">Șterge</button>
-               	</div>
-	        </li>
-	    </ul>
-	</div>
+<div th:unless="${#lists.isEmpty(routes)}" class="bg-gray-50 py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-8 text-center">
+            <h2 class="text-3xl font-semibold tracking-tight text-gray-900 sm:text-4xl">
+                Listă trasee recent adăugate
+            </h2>
+            <p th:text="'Avem un total de ' + ${routes.size} + ' rute adăugate până în prezent'" class="mt-2 text-lg text-gray-600"></p>
+        </div>
+        <ul role="list" class="divide-y divide-gray-200">
+            <li class="flex flex-wrap gap-y-4 items-center justify-between py-6 sm:flex-nowrap" th:each="route : ${routes}">
+                <div class="flex-1 min-w-0">
+                    <p class="text-lg font-medium text-gray-900" th:text="${route.getName}"></p>
+                    <p class="mt-2 text-sm text-gray-500">
+                        <span th:text="'Frumusețe: '"></span>
+                        <span class="text-yellow-400" th:each="i : ${#numbers.sequence(1, route.getRating)}">★</span>
+                        <span class="hidden sm:inline-block ml-2 text-gray-500" th:text="'(' + ${route.getRating} + ' stele)'"></span>
+                    </p>
+                </div>
+                <div class="flex-1 min-w-0 mt-4 sm:mt-0">
+                    <p class="text-sm text-gray-600">
+                        <span class="font-medium text-gray-900">Lungime:</span>
+                        <span th:text="${route.getLength} + ' metri'"></span>
+                    </p>
+                    <p class="mt-1 text-sm text-gray-600">
+                        <span class="font-medium text-gray-900">Număr bucle:</span>
+                        <span th:text="${route.getQuickDraws}"></span>
+                    </p>
+                </div>
+                <div class="flex-1 min-w-0 mt-4 sm:mt-0 text-right">
+                    <p class="text-sm text-gray-600">
+                        <span class="font-medium text-gray-900">Zonă:</span>
+                        <span th:text="${route.getSector.getZone.getName}"></span>
+                    </p>
+                    <p class="mt-1 text-sm text-gray-600">
+                        <span class="font-medium text-gray-900">Sector:</span>
+                        <span th:text="${route.getSector.getName}"></span>
+                    </p>
+                </div>
+                <!-- <div sec:authorize="isAuthenticated()" class="flex-none mt-4 sm:mt-0">
+                    <button type="button" class="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200" onclick="removeRoute(this)" th:attr="data-id=${route.id}">
+                        Șterge
+                    </button>
+                </div>  -->
+            </li>
+        </ul>
+    </div>
 </div>
 
-<script defer>
-	function removeRoute(button) {
-	    const routeId = button.getAttribute("data-id");
-	    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-	    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
-	    fetch('/remove-route', {
-	        method: 'POST',
-	        headers: {
-	            'Content-Type': 'application/x-www-form-urlencoded',
-	            [csrfHeader]: csrfToken
-	        },
-	        body: new URLSearchParams({ id: routeId })
-	    })
-	    .then(response => {
-	        if (response.ok) {
-	            const routeItem = button.closest('li');
-	            if (routeItem) {
-	                routeItem.remove();
-	            }
-	        } else {
-	            alert('Failed to delete the route. Please try again.');
-	        }
-	    })
-	    .catch(error => {
-	        console.error('Error deleting route:', error);
-	        alert('An error occurred while deleting the route.');
-	    });
-	}
-</script>
+<script src='/js/removeRoute.js' defer></script>
 
 
 

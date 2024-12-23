@@ -1,29 +1,33 @@
 <div th:if="${zone != null}" class="pb-10">
-	<div th:replace="fragments/breadcrumbs :: breadcrumbContent"></div>
+    <div th:replace="fragments/breadcrumbs :: breadcrumbContent"></div>
 </div>
 
-<div th:unless="${#lists.isEmpty(zone.sectors)}" class="mx-auto max-w-7xl px-6 lg:px-8">
-	<div class="text-center">
-		<h1 class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
-			Sectoare pentru zona: 
-			<span th:text="${zone.name}"></span>
-		</h1>
-		<p class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
-			Explorează sectoarele de cățărat din zonă
-		</p>
-	</div>
-	
-	<div th:if="${zone != null}" class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-		<div th:each="sector : ${zone.sectors}" class="rounded-lg bg-slate-100 p-4 text-center shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out transform hover:scale-105">
-			<a th:href="@{/areas/{zoneId}/sectors/{sectorId}(zoneId=${zone.id}, sectorId=${sector.id})}" class="block bg-cover bg-center rounded-lg h-40 relative" th:style="'background-image: url(/images/' + ${#strings.replace(sector.name, ' ', '%20')} + '.jpg);'">
-			    <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center rounded-lg">
-			        <h2 class="text-xl font-semibold text-white" th:text="${sector.name}"></h2>
-			        <p class="mt-2 text-gray-300">
-			            <span th:text="'Trasee: ' + ${sector.routeCount}"></span>
-			        </p>
-			    </div>
-			</a>
-		</div>
-	</div>
-</div>
+<div th:unless="${#lists.isEmpty(zone.sectors)}" class="bg-white py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="mt-4 text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+                Sectoare pentru zona: 
+                <span th:text="${zone.name}"></span>
+            </h1>
+            <p class="mt-6 text-base font-medium text-gray-500 sm:text-lg sm:leading-8">
+                Explorează sectoarele de cățărat din zonă.
+            </p>
+        </div>
 
+        <div th:if="${zone != null}" class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div th:each="sector : ${zone.sectors}" 
+                 class="rounded-lg bg-slate-100 p-4 shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out transform hover:scale-105">
+                <a th:href="@{/areas/{zoneId}/sectors/{sectorId}(zoneId=${zone.id}, sectorId=${sector.id})}" 
+                   class="block bg-cover bg-center rounded-lg h-40 relative" 
+                   th:style="'background-image: url(/images/' + ${#strings.replace(sector.name, ' ', '%20')} + '.jpg);'">
+                    <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center rounded-lg">
+                        <h2 class="text-lg font-semibold text-white sm:text-xl lg:text-2xl" th:text="${sector.name}"></h2>
+                        <p class="mt-2 text-sm text-gray-300 sm:text-base">
+                            <span th:text="'Trasee: ' + ${sector.routeCount}"></span>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

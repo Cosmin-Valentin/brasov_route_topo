@@ -1,9 +1,11 @@
-<div class="bg-white py-24 sm:py-32">
-	<div class="mx-auto max-w-7xl px-6 lg:px-8">
-		<div class="text-center">
-			<p class="text-base font-semibold text-indigo-600" th:text="${errorCode}"></p>
-			<h1 class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">E bai</h1>
-			<p class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8" th:text="${errorMessage}"></p>
-		</div>
-	</div>
+<div class="bg-white py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <p class="text-base font-semibold text-indigo-600" th:text="${errorCode}"></p>
+            <h1 class="mt-4 text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+                E bai
+            </h1>
+            <p class="mt-6 text-base font-medium text-gray-500 sm:text-lg sm:leading-8" th:text="${errorMessage}"></p>
+        </div>
+    </div>
 </div>
