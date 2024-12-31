@@ -7,7 +7,6 @@
 		    	<p class="text-sm text-gray-600">Te rog introdu informațiile relevante sau...</p>
 		    	<p class="text-sm text-gray-600">Poți începe prin a popula baza de date cu câteva informații predefinite</p>
 		    </div>
-		    <button onclick="populateDatabase()" class="px-6 py-2 bg-gray-800 text-white rounded-lg shadow-md hover:bg-gray-700 focus:ring-2 focus:ring-gray-500">Apăsând aici</button>
 		</div>
 
         <div th:if="${errors != null && !errors.isEmpty()}" 
@@ -229,21 +228,5 @@
 			
 		sectorDiv.innerHTML = sectorHtml;
 		newSectorDiv.parentNode.insertBefore(sectorDiv, newSectorDiv);
-	}
-	
-	function populateDatabase() {
-	    fetch('/populate-db')
-	        .then(response => {
-	            if (response.ok) {
-	                window.location.href = '/areas';
-	            } else {
-	                return response.text().then(errorMessage => {
-	                    throw new Error(errorMessage);
-	                });
-	            }
-	        })
-	        .catch(error => {
-	            alert('A apărut o problemă în timpul populării bazei de date. Te rog să repornesti aplicația.');
-	        });
 	}
 </script>
