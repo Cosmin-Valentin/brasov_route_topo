@@ -2,7 +2,6 @@ package com.primalsoup.topo.brasov_route_topo.Model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -30,9 +29,9 @@ public class Sector {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "sector")
 	private List<Route> routes = new ArrayList<>();
 
-//	@Column(columnDefinition = "json")
-//    @JdbcTypeCode(SqlTypes.JSON)
-//	private Map<String, Object> routeDrawingData;
+	@Lob
+    private byte[] image;
+	
 	@Lob
 	private String routeDrawingData;
 	
@@ -91,6 +90,14 @@ public class Sector {
     public void setRouteDrawingData(String routeDrawingData) {
         this.routeDrawingData = routeDrawingData;
     }
+    
+    public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 
 	@Override
 	public boolean equals(Object o) {

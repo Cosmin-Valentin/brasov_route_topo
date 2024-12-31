@@ -1,11 +1,13 @@
 package com.primalsoup.topo.brasov_route_topo.Service;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +18,7 @@ import com.primalsoup.topo.brasov_route_topo.Repository.RouteRepository;
 import com.primalsoup.topo.brasov_route_topo.Repository.SectorRepository;
 import com.primalsoup.topo.brasov_route_topo.Repository.ZoneRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RouteService {
@@ -58,7 +60,7 @@ public class RouteService {
 	}
 
 	@Transactional
-	public void addRoute(String zoneName, String sectorName, Route route) {
+	public void addRoute(String zoneName, String sectorName, Route route, MultipartFile sectorImage) throws IOException {
 		Optional<Zone> zoneOpt = zoneRepository.findByName(zoneName);
 		Zone zone = zoneOpt.orElseGet(() -> {
 			Zone newZone = new Zone(zoneName);
@@ -72,6 +74,11 @@ public class RouteService {
 			sectorRepository.save(newSector);
 			return newSector;
 		});
+		
+		if (sectorImage != null && !sectorImage.isEmpty() && !sectorOpt.isPresent()) {
+	        sector.setImage(sectorImage.getBytes());
+	        sectorRepository.save(sector);
+	    }
 
 		if (!zone.getSectors().contains(sector)) {
 			zone.addSector(sector);
@@ -83,7 +90,6 @@ public class RouteService {
 
 		route.setSector(sector);
 		routeRepository.save(route);
-
 		zoneRepository.save(zone);
 	}
 	
@@ -97,5 +103,12 @@ public class RouteService {
 	    
 	    sectorRepository.save(sector); 
 	}
+	
+	@Transactional(readOnly = true)
+    public byte[] getSectorImageById(Long sectorId) {
+        return sectorRepository.findById(sectorId)
+                .map(Sector::getImage)
+                .orElse(null);
+    }
 
 }

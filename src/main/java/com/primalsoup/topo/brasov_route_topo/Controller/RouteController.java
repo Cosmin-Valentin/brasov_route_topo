@@ -1,16 +1,13 @@
 package com.primalsoup.topo.brasov_route_topo.Controller;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -117,17 +114,22 @@ public class RouteController {
 		}
 		if ("new".equals(sectorName) && newSector != null && !newSector.isBlank()) {
 			sectorName = newSector;
-			
-			try {
-				saveSectorImage(sectorName, sectorImage);
-			} catch (IOException e) {
-                model.addAttribute("error", "Failed to save sector image.");
-                return "page-route-form";
-            }
 		}
 
-		Route route = new Route(routeForm.getName(), routeForm.getDifficulty(), routeForm.getLength(), routeForm.getQuickDraws(), routeForm.getRating());
-		routeService.addRoute(zoneName, sectorName, route);
+		Route route = new Route(
+				routeForm.getName(), 
+				routeForm.getDifficulty(), 
+				routeForm.getLength(), 
+				routeForm.getQuickDraws(), 
+				routeForm.getRating()
+		);
+		
+		try {
+	        routeService.addRoute(zoneName, sectorName, route, sectorImage);
+	    } catch (IOException e) {
+	        model.addAttribute("error", "Failed to save sector image.");
+	        return "page-route-form";
+	    }
 
 		return "redirect:/add-route";
 	}
@@ -153,6 +155,19 @@ public class RouteController {
 	    routeService.saveRouteDrawings(sector, routeDrawingData); 
 	    
 	    return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping("/sectors/{id}/image")
+	public ResponseEntity<byte[]> getSectorImage(@PathVariable Long id) {
+	    byte[] image = routeService.getSectorImageById(id);
+
+	    if (image == null) {
+	        return ResponseEntity.notFound().build();
+	    }
+
+	    return ResponseEntity.ok()
+	            .contentType(MediaType.IMAGE_JPEG)
+	            .body(image);
 	}
 
 	private void populateModelForForm(Model model, RouteForm routeForm, List<ObjectError> errors) throws JsonProcessingException {
@@ -182,24 +197,4 @@ public class RouteController {
 
 		return zoneDTO;
 	}
-	
-	private void saveSectorImage(String sectorName, MultipartFile sectorImage) throws IOException {
-        if (sectorImage != null && !sectorImage.isEmpty()) {
-            String uploadDir = "src/main/resources/static/images";
-            String fileName = sectorName.replaceAll("\\s+", " ") + "." + getExtension(sectorImage.getOriginalFilename());
-
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            Files.copy(sectorImage.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
-
-    private String getExtension(String fileName) {
-        if (fileName == null) return "jpg";
-        int dotIndex = fileName.lastIndexOf('.');
-        return (dotIndex == -1) ? "jpg" : fileName.substring(dotIndex + 1);
-    }
 }

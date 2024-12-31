@@ -58,6 +58,7 @@
 						<label for="sector-image" class="block text-sm/6 font-medium text-gray-900 mt-4">Imagine sector:</label>
 					    <div class="mt-2">
 					        <input type="file" name="sectorImage" id="sector-image" class="block w-full text-gray-900 sm:text-sm/6" accept="image/*">
+					    	<p id="message"></p>
 					    </div>
 					</div>
 					
@@ -229,4 +230,68 @@
 		sectorDiv.innerHTML = sectorHtml;
 		newSectorDiv.parentNode.insertBefore(sectorDiv, newSectorDiv);
 	}
+	
+	document.getElementById("sector-image").addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const MAX_SIZE_MB = 3;
+        const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+        // Check initial file size
+        if (file.size <= MAX_SIZE_BYTES) {
+            document.getElementById("message").textContent = "Image size is within the limit of 3 MB.";
+            return;
+        }
+
+        // Resize the image
+        const resizedFile = await resizeImage(file, MAX_SIZE_BYTES);
+
+        // Display the result or proceed with upload
+        if (resizedFile) {
+            document.getElementById("message").textContent =
+                `Image resized to ${(resizedFile.size / 1024 / 1024).toFixed(2)} MB.`;
+            // You can now upload resizedFile using FormData or any HTTP request.
+        } else {
+            document.getElementById("message").textContent = "Failed to resize image.";
+        }
+    });
+
+    async function resizeImage(file, maxSizeBytes) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                img.src = reader.result;
+            };
+
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                // Calculate scaling factor
+                const scalingFactor = Math.sqrt(maxSizeBytes / file.size);
+                canvas.width = img.width * scalingFactor;
+                canvas.height = img.height * scalingFactor;
+
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                // Convert canvas to Blob
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob && blob.size <= maxSizeBytes) {
+                            resolve(new File([blob], file.name, { type: file.type }));
+                        } else {
+                            resolve(null); // Failed to resize within limits
+                        }
+                    },
+                    file.type,
+                    0.9 // Quality (for lossy formats like JPEG)
+                );
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
 </script>
