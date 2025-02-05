@@ -1,5 +1,5 @@
 <div th:unless="${#lists.isEmpty(routes)}" class="pb-10">
-    <div th:replace="fragments/breadcrumbs :: breadcrumbContent"></div>
+    <div th:replace="~{fragments/breadcrumbs :: breadcrumbContent}"></div>
 </div>
 
 <div th:if="${#lists.isEmpty(routes)}" class="bg-white py-16 sm:py-24">

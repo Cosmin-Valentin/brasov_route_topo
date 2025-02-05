@@ -1,5 +1,5 @@
 <div th:if="${zone != null}" class="pb-10">
-    <div th:replace="fragments/breadcrumbs :: breadcrumbContent"></div>
+    <div th:replace="~{fragments/breadcrumbs :: breadcrumbContent}"></div>
 </div>
 
 <div th:unless="${#lists.isEmpty(zone.sectors)}" class="bg-white py-16 sm:py-24">

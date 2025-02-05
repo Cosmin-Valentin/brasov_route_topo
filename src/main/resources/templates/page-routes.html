@@ -1,5 +1,5 @@
 <div th:unless="${#lists.isEmpty(routes)}" class="pb-10">
-    <div th:replace="fragments/breadcrumbs :: breadcrumbContent"></div>
+    <div th:replace="~{fragments/breadcrumbs :: breadcrumbContent}"></div>
 </div>
 
 <div th:if="${#lists.isEmpty(routes)}" class="bg-white py-16 sm:py-24">
@@ -104,7 +104,6 @@
 	
 	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 	const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-   	let sectorDrawings = {}; 
 	
 	document.addEventListener('DOMContentLoaded', () => {
 		loadImage();
@@ -137,19 +136,9 @@
 	    let currentRoute = null;
 	    let currentRouteNr = null;
 	    let drawnRoutes = {};
+	    let sectorDrawings = {}; 
 	    
-	    function resizeCanvas() {
-	        canvas.width = image.offsetWidth;
-	        canvas.height = image.offsetHeight;
-	        canvas.style.width = `${image.offsetWidth}px`;
-	        canvas.style.height = `${image.offsetHeight}px`;
-	    }
-	    resizeCanvas();
-	    window.addEventListener('resize', resizeCanvas);
-	    
-	    document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
-	        btn.classList.remove('hidden');
-	    });
+	    setupCanvas(canvas, image, ctx)
 	    
 	    let routeDrawingData = '[[${routeDrawingData}]]';
 	    if(routeDrawingData) {
@@ -159,7 +148,7 @@
 		    	sectorDrawings = routeDrawingData;
 		    	Object.keys(sectorDrawings).forEach(id => {
 		    		const routeNr = sectorDrawings[id].bubble.number;
-		    		redrawRoute(id);
+		    		redrawRoute(canvas, ctx, sectorDrawings, id);
 		    		document.querySelector(`.delete-drawing-btn[data-route-nr='${routeNr}']`).classList.remove('hidden');
 		            document.querySelector(`.drawing-toggle-btn[data-route-nr='${routeNr}']`).classList.add('hidden'); 
 		    	});
@@ -170,7 +159,6 @@
 		    } 
 	    }
 	    
-
 	    canvas.addEventListener('mousedown', (e) => {
 	        if (!drawingEnabled || !currentRoute) return;
 	        isDrawing = true;
@@ -178,21 +166,8 @@
 	        const circleRadius = 12;
 	        const circleX = e.offsetX;
 	        const circleY = e.offsetY + circleRadius + 5;
-
-	        ctx.beginPath();
-	        ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
-	        ctx.fillStyle = 'white';
-	        ctx.fill();
-	        ctx.strokeStyle = 'orange';
-	        ctx.lineWidth = 2;
-	        ctx.stroke();
-	        ctx.closePath();
-
-	        ctx.font = '18px Arial';
-	        ctx.fillStyle = 'orange';
-	        ctx.textAlign = 'center';
-	        ctx.textBaseline = 'middle';
-	        ctx.fillText(`${currentRouteNr}`, circleX, circleY);
+	        
+	        drawCircle(ctx, circleX, circleY, circleRadius, currentRouteNr);
 
 	        if (!sectorDrawings[currentRoute]) {
 	        	sectorDrawings[currentRoute] = { points: [], bubble: { x: circleX, y: circleY, radius: circleRadius, number: currentRouteNr } };
@@ -222,51 +197,17 @@
 	        isDrawing = false;
 	    });
 
-	    function redrawRoute(routeId) {
-	        if (!sectorDrawings[routeId]) return;
-
-	        const { points, bubble } = sectorDrawings[routeId];
-
-	        ctx.beginPath();
-	        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
-	        ctx.fillStyle = 'white';
-	        ctx.fill();
-	        ctx.strokeStyle = 'orange';
-	        ctx.lineWidth = 2;
-	        ctx.stroke();
-	        ctx.closePath();
-
-	        ctx.font = '18px Arial';
-	        ctx.fillStyle = 'orange';
-	        ctx.textAlign = 'center';
-	        ctx.textBaseline = 'middle';
-	        ctx.fillText(`${bubble.number}`, bubble.x, bubble.y);
-
-	        ctx.beginPath();
-	        points.forEach((point) => {
-	            if (point.type === 'start') {
-	                ctx.moveTo(point.x, point.y);
-	            } else if (point.type === 'line') {
-	                ctx.lineTo(point.x, point.y);
-	                ctx.strokeStyle = 'orange';
-	                ctx.lineWidth = 3;
-	                ctx.stroke();
-	            }
-	        });
-	        ctx.closePath();
-	    }
-
 	    window.deleteRouteDrawing = (routeId, routeNr) => {
 	        if (sectorDrawings[routeId]) {
 	            delete sectorDrawings[routeId];
 	            drawnRoutes[routeId] = false;
 	            ctx.clearRect(0, 0, canvas.width, canvas.height);
 	            
-	            Object.keys(sectorDrawings).forEach(redrawRoute);
+	            Object.keys(sectorDrawings).forEach(id => redrawRoute(canvas, ctx, sectorDrawings, id));
 	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.add('hidden');
 	            document.querySelector(`.drawing-toggle-btn[data-id='${routeId}']`).classList.remove('hidden');
 	            showNotification(`Linia traseului ${routeNr} a fost ștearsă`);
-	            saveRouteDrawings();
+	            saveRouteDrawings(sectorDrawings);
 	        }
 	    };
 
@@ -292,7 +233,7 @@
 	                btn.removeAttribute("disabled");
 	            });
 	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.remove('hidden');
-	            saveRouteDrawings();
+	            saveRouteDrawings(sectorDrawings);
 	            showNotification(`Linia traseului ${routeNr} a fost salvată`);
 	        } else {
 	            if (drawnRoutes[routeId]) {
@@ -319,6 +260,60 @@
 	    };
 	}
 	
+	function setupCanvas(canvas, image, ctx) {
+	    function resizeCanvas() {
+	        canvas.width = image.offsetWidth;
+	        canvas.height = image.offsetHeight;
+	        canvas.style.width = `${image.offsetWidth}px`;
+	        canvas.style.height = `${image.offsetHeight}px`;
+	    }
+
+	    resizeCanvas();
+	    window.addEventListener('resize', resizeCanvas);
+
+	    document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
+	        btn.classList.remove('hidden');
+	    });
+	}
+	
+	function redrawRoute(canvas, ctx, sectorDrawings, routeId) {
+	    if (!sectorDrawings[routeId]) return;
+
+	    const { points, bubble } = sectorDrawings[routeId];
+
+	    drawCircle(ctx, bubble.x, bubble.y, bubble.radius, bubble.number);
+
+	    ctx.beginPath();
+	    points.forEach((point) => {
+	        if (point.type === 'start') {
+	            ctx.moveTo(point.x, point.y);
+	        } else if (point.type === 'line') {
+	            ctx.lineTo(point.x, point.y);
+	            ctx.strokeStyle = 'orange';
+	            ctx.lineWidth = 3;
+	            ctx.stroke();
+	        }
+	    });
+	    ctx.closePath();
+	}
+	
+	function drawCircle(ctx, x, y, radius, number) {
+	    ctx.beginPath();
+	    ctx.arc(x, y, radius, 0, Math.PI * 2);
+	    ctx.fillStyle = 'white';
+	    ctx.fill();
+	    ctx.strokeStyle = 'orange';
+	    ctx.lineWidth = 2;
+	    ctx.stroke();
+	    ctx.closePath();
+
+	    ctx.font = '18px Arial';
+	    ctx.fillStyle = 'orange';
+	    ctx.textAlign = 'center';
+	    ctx.textBaseline = 'middle';
+	    ctx.fillText(`${number}`, x, y);
+	}
+	
 	function showNotification(message, isDrawing = false) {
         const notification = document.getElementById('notification');
         const notificationMessage = document.getElementById('notification-message');
@@ -342,7 +337,7 @@
         }
     }
 	
-	function saveRouteDrawings() {
+	function saveRouteDrawings(sectorDrawings) {
 		const path = window.location.pathname;
 	    fetch(`${path}/saveRouteDrawings`, {
 	        method: 'POST',
