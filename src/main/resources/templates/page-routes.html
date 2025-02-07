@@ -198,10 +198,12 @@
 
 	    const { points, bubble } = sectorDrawings[routeId];
 
+	    const pixelRadius = bubble.radius * Math.min(canvas.width, canvas.height);
+
 	    const scaledBubble = {
 	        x: bubble.x * canvas.width,
 	        y: bubble.y * canvas.height,
-	        radius: bubble.radius * Math.min(canvas.width, canvas.height),
+	        radius: pixelRadius,
 	        number: bubble.number
 	    };
 
@@ -228,16 +230,22 @@
 	}
 	
 	function drawCircle(ctx, x, y, radius, number) {
+	    const cappedRadius = Math.min(radius, 12);
+
 	    ctx.beginPath();
-	    ctx.arc(x, y, radius, 0, Math.PI * 2);
+	    ctx.arc(x, y, cappedRadius, 0, Math.PI * 2);
+
 	    ctx.fillStyle = 'white';
 	    ctx.fill();
+
 	    ctx.strokeStyle = 'orange';
 	    ctx.lineWidth = 2;
 	    ctx.stroke();
+
 	    ctx.closePath();
 
-	    ctx.font = '18px Arial';
+	    const fontSize = Math.min(18, cappedRadius * 1.5)
+	    ctx.font = `${fontSize}px Arial`;
 	    ctx.fillStyle = 'orange';
 	    ctx.textAlign = 'center';
 	    ctx.textBaseline = 'middle';
@@ -248,39 +256,21 @@
 	    canvas.addEventListener('mousedown', handleMouseDown);
 	    canvas.addEventListener('mousemove', handleMouseMove);
 	    canvas.addEventListener('mouseup', handleMouseUp);
+	    
+	    canvas.addEventListener('touchstart', handleTouchStart);
+	    canvas.addEventListener('touchmove', handleTouchMove);
+	    canvas.addEventListener('touchend', handleTouchEnd);
+	    
 	}
 	
 	function handleMouseDown(e) {
-	    if (!drawingEnabled || !currentRoute) return;
-	    isDrawing = true;
-
-	    const circleRadius = 12;
-	    const circleX = e.offsetX;
-	    const circleY = e.offsetY + circleRadius + 5;
-
-	    drawCircle(ctx, circleX, circleY, circleRadius, currentRouteNr);
-
-	    if (!sectorDrawings[currentRoute]) {
-	        sectorDrawings[currentRoute] = { points: [], bubble: { x: 0, y: 0, radius: 0, number: currentRouteNr } }; 
-
-	    }
-
-	    sectorDrawings[currentRoute].points.push({ type: 'start', x: circleX / canvas.width, y: (circleY - circleRadius - 10) / canvas.height }); 
-	    sectorDrawings[currentRoute].bubble = { x: circleX / canvas.width, y: circleY / canvas.height, radius: circleRadius / Math.min(canvas.width, canvas.height), number: currentRouteNr };
-
-	    ctx.beginPath();
-	    ctx.moveTo(circleX, circleY - circleRadius - 10);
+		handleDrawingStart(e.offsetX, e.offsetY);
 	}
 	
 	function handleMouseMove(e) {
 	    if (!isDrawing) return;
 
-	    ctx.lineTo(e.offsetX, e.offsetY);
-	    ctx.strokeStyle = 'orange';
-	    ctx.lineWidth = 3;
-	    ctx.stroke();
-
-	    sectorDrawings[currentRoute].points.push({ type: 'line', x: e.offsetX / canvas.width, y: e.offsetY / canvas.height });
+	    handleDrawingMove(e.offsetX, e.offsetY); 
 	}
 	
 	function handleMouseUp() {
@@ -288,6 +278,79 @@
 	        drawnRoutes[currentRoute] = true;
 	    }
 	    isDrawing = false;
+	}
+	
+	function handleTouchStart(e) {
+		e.preventDefault();
+		const touch = e.touches[0];
+	    const rect = canvas.getBoundingClientRect();
+	    const x = touch.clientX - rect.left;
+	    const y = touch.clientY - rect.top;
+
+	    handleDrawingStart(x, y);
+	}
+	
+	function handleTouchMove(e) {
+	    e.preventDefault(); 
+	    if (!isDrawing) return;
+
+	    const touch = e.touches[0];
+	    const rect = canvas.getBoundingClientRect();
+	    const x = touch.clientX - rect.left;
+	    const y = touch.clientY - rect.top;
+
+	    handleDrawingMove(x, y);
+	}
+
+	function handleTouchEnd(e) {
+	    e.preventDefault(); 
+	    handleMouseUp(); 
+	}
+	
+	function handleDrawingStart(x, y) {
+	    if (!drawingEnabled || !currentRoute) return;
+	    isDrawing = true;
+
+	    const initialCircleRadius = 12;
+	    const rect = canvas.getBoundingClientRect();
+	    const circleX = x;
+	    const circleY = y + initialCircleRadius + 5;
+
+	    if (!sectorDrawings[currentRoute]) {
+	        sectorDrawings[currentRoute] = { points: [], bubble: { x: 0, y: 0, radius: 0, number: currentRouteNr } };
+	    }
+
+	    const relativeRadius = Math.min(initialCircleRadius, 12) / Math.min(canvas.width, canvas.height);
+
+	    sectorDrawings[currentRoute].points.push({ type: 'start', x: circleX / canvas.width, y: (circleY - initialCircleRadius - 10) / canvas.height });
+	    sectorDrawings[currentRoute].bubble = {
+	        x: circleX / canvas.width,
+	        y: circleY / canvas.height,
+	        radius: relativeRadius,
+	        number: currentRouteNr
+	    };
+
+	    const pixelRadius = relativeRadius * Math.min(canvas.width, canvas.height);
+
+	    drawCircle(ctx, circleX, circleY, pixelRadius, currentRouteNr);
+
+	    ctx.beginPath();
+	    ctx.moveTo(circleX, circleY - initialCircleRadius - 10);
+	}
+
+
+	function handleDrawingMove(x, y) { 
+	    if (!isDrawing) return;
+
+	    const currentX = x;
+	    const currentY = y;
+
+	    ctx.lineTo(currentX, currentY);
+	    ctx.strokeStyle = 'orange';
+	    ctx.lineWidth = 3;
+	    ctx.stroke();
+
+	    sectorDrawings[currentRoute].points.push({ type: 'line', x: currentX / canvas.width, y: currentY / canvas.height });
 	}
 	
 	function setupButtonEvents() {
