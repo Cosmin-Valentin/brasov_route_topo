@@ -105,167 +105,76 @@
 	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 	const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 	
-	document.addEventListener('DOMContentLoaded', () => {
-		loadImage();
-	});
+	let canvas, ctx, image;
+	let drawingEnabled = false;
+    let isDrawing = false;
+    let currentRoute = null;
+    let currentRouteNr = null;
+    let drawnRoutes = {};
+    let sectorDrawings = {}; 
+	
+	document.addEventListener('DOMContentLoaded', loadImage);
 	
 	function loadImage() {
 		const img = document.getElementById('sector-image');
 
-		if (img) {
-	        fetch(img.src)
-	            .then(response => {
-	                if (response.ok) {
-		                loadCanvas();
-	                } else {
-	                    img.style.display = 'none';
-	                } 
-	            })
-	            .catch(() => {
-	                img.style.display = 'none';
-	            });
-	    }
+		if (!img) return;
+		
+        fetch(img.src)
+            .then(response => {
+                if (!response.ok) {
+	                throw new Error('Network response was not ok')
+                } 
+                return response;
+            })
+            .then(() => loadCanvas())
+            .catch(() => {
+                img.style.display = 'none';
+            });
 	}
 	
 	function loadCanvas() {
-	    const canvas = document.getElementById('drawing-canvas');
-	    const ctx = canvas.getContext('2d');
-	    const image = document.getElementById('sector-image');
-	    let drawingEnabled = false;
-	    let isDrawing = false;
-	    let currentRoute = null;
-	    let currentRouteNr = null;
-	    let drawnRoutes = {};
-	    let sectorDrawings = {}; 
+	   	canvas = document.getElementById('drawing-canvas');
+	    ctx = canvas.getContext('2d');
+	    image = document.getElementById('sector-image');
 	    
 	    setupCanvas(canvas, image, ctx)
 	    
-	    let routeDrawingData = '[[${routeDrawingData}]]';
+	    const routeDrawingData = '[[${routeDrawingData}]]';
 	    if(routeDrawingData) {
-	    	routeDrawingData = decodeDrawingData('[[${routeDrawingData}]]');
-		    
-		    if (typeof routeDrawingData === 'object') {
-		    	sectorDrawings = routeDrawingData;
-		    	Object.keys(sectorDrawings).forEach(id => {
-		    		const routeNr = sectorDrawings[id].bubble.number;
-		    		redrawRoute(canvas, ctx, sectorDrawings, id);
-		    		document.querySelector(`.delete-drawing-btn[data-route-nr='${routeNr}']`).classList.remove('hidden');
-		            document.querySelector(`.drawing-toggle-btn[data-route-nr='${routeNr}']`).classList.add('hidden'); 
-		    	});
-		    	
-		    } else {
-		        showNotification('Eroare la adăugarea liniilor existente');
-		    	console.error('Type of routeDrawingData:', typeof routeDrawingData);
-		    } 
+	    	try {
+	    		const decodedData = decodeDrawingData('[[${routeDrawingData}]]');
+	    		if (typeof decodedData === 'object') {
+			    	sectorDrawings = decodedData;
+			    	Object.keys(sectorDrawings).forEach(id => {
+			    		const routeNr = sectorDrawings[id].bubble.number;
+			    		redrawRoute(canvas, ctx, sectorDrawings, id);
+			    		document.querySelector(`.delete-drawing-btn[data-route-nr='${routeNr}']`).classList.remove('hidden');
+			            document.querySelector(`.drawing-toggle-btn[data-route-nr='${routeNr}']`).classList.add('hidden'); 
+			    	});
+	    		} else {
+			        showNotification('Eroare la adăugarea liniilor existente');
+			    	console.error('Type of routeDrawingData:', typeof decodedData);
+			    } 
+	    	} catch (error) {
+	    		showNotification('Eroare la adăugarea liniilor existente');
+		    	console.error('Type of routeDrawingData:', error);    		
+	    	}
 	    }
 	    
-	    canvas.addEventListener('mousedown', (e) => {
-	        if (!drawingEnabled || !currentRoute) return;
-	        isDrawing = true;
-
-	        const circleRadius = 12;
-	        const circleX = e.offsetX;
-	        const circleY = e.offsetY + circleRadius + 5;
-	        
-	        drawCircle(ctx, circleX, circleY, circleRadius, currentRouteNr);
-
-	        if (!sectorDrawings[currentRoute]) {
-	        	sectorDrawings[currentRoute] = { points: [], bubble: { x: circleX, y: circleY, radius: circleRadius, number: currentRouteNr } };
-	        }
-
-	        sectorDrawings[currentRoute].points.push({ type: 'start', x: circleX, y: circleY - circleRadius - 10 });
-
-	        ctx.beginPath();
-	        ctx.moveTo(circleX, circleY - circleRadius - 10);
-	    });
-
-	    canvas.addEventListener('mousemove', (e) => {
-	        if (!isDrawing) return;
-
-	        ctx.lineTo(e.offsetX, e.offsetY);
-	        ctx.strokeStyle = 'orange';
-	        ctx.lineWidth = 3;
-	        ctx.stroke();
-
-	        sectorDrawings[currentRoute].points.push({ type: 'line', x: e.offsetX, y: e.offsetY });
-	    });
-
-	    canvas.addEventListener('mouseup', () => {
-	        if (drawingEnabled && currentRoute) {
-	            drawnRoutes[currentRoute] = true;
-	        }
-	        isDrawing = false;
-	    });
-
-	    window.deleteRouteDrawing = (routeId, routeNr) => {
-	        if (sectorDrawings[routeId]) {
-	            delete sectorDrawings[routeId];
-	            drawnRoutes[routeId] = false;
-	            ctx.clearRect(0, 0, canvas.width, canvas.height);
-	            
-	            Object.keys(sectorDrawings).forEach(id => redrawRoute(canvas, ctx, sectorDrawings, id));
-	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.add('hidden');
-	            document.querySelector(`.drawing-toggle-btn[data-id='${routeId}']`).classList.remove('hidden');
-	            showNotification(`Linia traseului ${routeNr} a fost ștearsă`);
-	            saveRouteDrawings(sectorDrawings);
-	        }
-	    };
-
-	    window.toggleDrawing = (button) => {
-	        const routeId = button.getAttribute('data-id');
-	        const routeNr = button.getAttribute('data-route-nr');
-
-	        if (currentRoute && currentRoute !== routeId) {
-	            return;
-	        }
-	        
-	        if (drawingEnabled) {
-	            drawingEnabled = false;
-	            currentRoute = null;
-	            currentRouteNr = null;
-	            button.textContent = 'Trasează linia';
-	            button.classList.remove('bg-green-50', 'text-green-600', 'hover:bg-green-100', 'focus:ring-green-200');
-	            button.classList.add('hidden', 'bg-orange-50', 'text-orange-600', 'hover:bg-orange-100', 'focus:ring-orange-200');
-	            document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
-	                btn.removeAttribute("disabled");
-	            });
-	            document.querySelectorAll('.delete-drawing-btn').forEach((btn) => {
-	                btn.removeAttribute("disabled");
-	            });
-	            document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.remove('hidden');
-	            saveRouteDrawings(sectorDrawings);
-	            showNotification(`Linia traseului ${routeNr} a fost salvată`);
-	        } else {
-	            if (drawnRoutes[routeId]) {
-	                showNotification('Linia traseului este deja salvată');
-	                return;
-	            }
-
-	            currentRoute = routeId;
-	            currentRouteNr = routeNr;
-	            drawingEnabled = true;
-	            button.textContent = 'Salvează linia';
-	            button.classList.remove('bg-orange-50', 'text-orange-600', 'hover:bg-orange-100', 'focus:ring-orange-200');
-	            button.classList.add('bg-green-50', 'text-green-600', 'hover:bg-green-100', 'focus:ring-green-200');
-	            document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
-	                if (btn !== button) {
-	                    btn.setAttribute("disabled", "true");
-	                }
-	            });
-	            document.querySelectorAll('.delete-drawing-btn').forEach((btn) => {
-                    btn.setAttribute("disabled", "true");
-	            });
-	            showNotification('Trasează linia traseului', true);
-	        }
-	    };
+	    setupMouseEvents();
+	    setupButtonEvents();
 	}
 	
 	function setupCanvas(canvas, image, ctx) {
 	    function resizeCanvas() {
 	        canvas.width = image.offsetWidth;
 	        canvas.height = image.offsetHeight;
+	        
 	        canvas.style.width = `${image.offsetWidth}px`;
 	        canvas.style.height = `${image.offsetHeight}px`;
+
+	        redrawAllRoutes();
 	    }
 
 	    resizeCanvas();
@@ -276,15 +185,36 @@
 	    });
 	}
 	
+	function redrawAllRoutes() {
+	    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	    Object.keys(sectorDrawings).forEach(routeId => {
+	        redrawRoute(canvas, ctx, sectorDrawings, routeId);
+	    });
+	}
+	
 	function redrawRoute(canvas, ctx, sectorDrawings, routeId) {
 	    if (!sectorDrawings[routeId]) return;
 
 	    const { points, bubble } = sectorDrawings[routeId];
 
-	    drawCircle(ctx, bubble.x, bubble.y, bubble.radius, bubble.number);
+	    const scaledBubble = {
+	        x: bubble.x * canvas.width,
+	        y: bubble.y * canvas.height,
+	        radius: bubble.radius * Math.min(canvas.width, canvas.height),
+	        number: bubble.number
+	    };
+
+	    const scaledPoints = points.map(point => ({
+	        type: point.type,
+	        x: point.x * canvas.width,
+	        y: point.y * canvas.height
+	    }));
+
+	    drawCircle(ctx, scaledBubble.x, scaledBubble.y, scaledBubble.radius, scaledBubble.number);
 
 	    ctx.beginPath();
-	    points.forEach((point) => {
+	    scaledPoints.forEach((point) => {
 	        if (point.type === 'start') {
 	            ctx.moveTo(point.x, point.y);
 	        } else if (point.type === 'line') {
@@ -314,16 +244,129 @@
 	    ctx.fillText(`${number}`, x, y);
 	}
 	
+	function setupMouseEvents() {
+	    canvas.addEventListener('mousedown', handleMouseDown);
+	    canvas.addEventListener('mousemove', handleMouseMove);
+	    canvas.addEventListener('mouseup', handleMouseUp);
+	}
+	
+	function handleMouseDown(e) {
+	    if (!drawingEnabled || !currentRoute) return;
+	    isDrawing = true;
+
+	    const circleRadius = 12;
+	    const circleX = e.offsetX;
+	    const circleY = e.offsetY + circleRadius + 5;
+
+	    drawCircle(ctx, circleX, circleY, circleRadius, currentRouteNr);
+
+	    if (!sectorDrawings[currentRoute]) {
+	        sectorDrawings[currentRoute] = { points: [], bubble: { x: 0, y: 0, radius: 0, number: currentRouteNr } }; 
+
+	    }
+
+	    sectorDrawings[currentRoute].points.push({ type: 'start', x: circleX / canvas.width, y: (circleY - circleRadius - 10) / canvas.height }); 
+	    sectorDrawings[currentRoute].bubble = { x: circleX / canvas.width, y: circleY / canvas.height, radius: circleRadius / Math.min(canvas.width, canvas.height), number: currentRouteNr };
+
+	    ctx.beginPath();
+	    ctx.moveTo(circleX, circleY - circleRadius - 10);
+	}
+	
+	function handleMouseMove(e) {
+	    if (!isDrawing) return;
+
+	    ctx.lineTo(e.offsetX, e.offsetY);
+	    ctx.strokeStyle = 'orange';
+	    ctx.lineWidth = 3;
+	    ctx.stroke();
+
+	    sectorDrawings[currentRoute].points.push({ type: 'line', x: e.offsetX / canvas.width, y: e.offsetY / canvas.height });
+	}
+	
+	function handleMouseUp() {
+	    if (drawingEnabled && currentRoute) {
+	        drawnRoutes[currentRoute] = true;
+	    }
+	    isDrawing = false;
+	}
+	
+	function setupButtonEvents() {
+		window.deleteRouteDrawing = handleDeleteRouteDrawing;
+		window.toggleDrawing = handleToggleDrawing;
+	}
+	
+	function handleDeleteRouteDrawing(routeId, routeNr) {
+	    if (sectorDrawings[routeId]) {
+	        delete sectorDrawings[routeId];
+	        drawnRoutes[routeId] = false;
+	        redrawAllRoutes();
+	        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	        Object.keys(sectorDrawings).forEach(id => redrawRoute(canvas, ctx, sectorDrawings, id));
+	        document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.add('hidden');
+	        document.querySelector(`.drawing-toggle-btn[data-id='${routeId}']`).classList.remove('hidden');
+	        showNotification(`Linia traseului ${routeNr} a fost ștearsă`);
+	        saveRouteDrawings(sectorDrawings);
+	    }
+	}
+	
+	function handleToggleDrawing(button) {
+	    const routeId = button.dataset.id;
+	    const routeNr = button.dataset['routeNr'];
+
+	    if (currentRoute && currentRoute !== routeId) return;
+
+	    if (drawingEnabled) {
+	        drawingEnabled = false;
+	        currentRoute = null;
+	        currentRouteNr = null;
+	        button.textContent = 'Trasează linia';
+	        button.classList.remove('bg-green-50', 'text-green-600', 'hover:bg-green-100', 'focus:ring-green-200');
+	        button.classList.add('hidden', 'bg-orange-50', 'text-orange-600', 'hover:bg-orange-100', 'focus:ring-orange-200');
+	        document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
+	            btn.removeAttribute("disabled");
+	        });
+	        document.querySelectorAll('.delete-drawing-btn').forEach((btn) => {
+	            btn.removeAttribute("disabled");
+	        });
+	        document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.remove('hidden');
+	        saveRouteDrawings(sectorDrawings);
+	        showNotification(`Linia traseului ${routeNr} a fost salvată`);
+	    } else {
+	        if (drawnRoutes[routeId]) {
+	            showNotification('Linia traseului este deja salvată');
+	            return;
+	        }
+
+	        currentRoute = routeId;
+	        currentRouteNr = routeNr;
+	        drawingEnabled = true;
+	        button.textContent = 'Salvează linia';
+	        button.classList.remove('bg-orange-50', 'text-orange-600', 'hover:bg-orange-100', 'focus:ring-orange-200');
+	        button.classList.add('bg-green-50', 'text-green-600', 'hover:bg-green-100', 'focus:ring-green-200');
+	        document.querySelectorAll('.drawing-toggle-btn').forEach((btn) => {
+	            if (btn !== button) {
+	                btn.setAttribute("disabled", "true");
+	            }
+	        });
+	        document.querySelectorAll('.delete-drawing-btn').forEach((btn) => {
+	            btn.setAttribute("disabled", "true");
+	        });
+	        showNotification('Trasează linia traseului', true);
+	    }
+	}
+	
 	function showNotification(message, isDrawing = false) {
         const notification = document.getElementById('notification');
         const notificationMessage = document.getElementById('notification-message');
         
+        if(!notification && !notificationMessage) return;
+        
         notificationMessage.textContent = message;
+        notification.classList.remove('hidden', 'opacity-0');
+        notification.classList.add('opacity-100');
         
         if (!isDrawing) {
-            notification.classList.remove('hidden', 'opacity-0');
-            notification.classList.add('opacity-100');
-            
             setTimeout(() => {
                 notification.classList.remove('opacity-100');
                 notification.classList.add('opacity-0');
@@ -331,9 +374,6 @@
                     notification.classList.add('hidden');
                 }, 500);
             }, 5000);
-        } else {
-            notification.classList.remove('opacity-0', 'hidden');
-            notification.classList.add('opacity-100');
         }
     }
 	
@@ -358,7 +398,7 @@
 	}
 	
 	function removeRoute(button) {
-	    const routeId = button.getAttribute("data-id");
+	    const routeId = button.dataset.id;
 
 	    fetch('/remove-route', {
 	        method: 'POST',
@@ -385,17 +425,16 @@
 	}
 	
 	function decodeDrawingData(data) {
-		const cleanData = data
-		  .replace(/&quot;/g, '"') 
-		  .replace(/&amp;/g, '&')  
-		  .replace(/&#39;/g, "'")  
-		  .replace(/&lt;/g, '<')  
-		  .replace(/&gt;/g, '>');
-		
 		try {
-			return JSON.parse(cleanData);
+			return JSON.parse(data
+					  .replace(/&quot;/g, '"') 
+					  .replace(/&amp;/g, '&')  
+					  .replace(/&#39;/g, "'")  
+					  .replace(/&lt;/g, '<')  
+					  .replace(/&gt;/g, '>'));
 		} catch (error) {
-		  	console.error("Failed to parse JSON:", routeDrawingData);
+		  	console.error("Failed to parse JSON:", data);
+		  	return null;
 		}
 	}
 </script>
