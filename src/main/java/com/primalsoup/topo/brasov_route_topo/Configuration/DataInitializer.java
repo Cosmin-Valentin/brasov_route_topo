@@ -14,12 +14,20 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner commandLineRunner(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            if (userRepository.findByUsername("utilizator").isEmpty()) {
+            if (userRepository.findByUsername("administrator").isEmpty()) {
                 UserEntity user = new UserEntity();
-                user.setUsername("utilizator");
-                user.setPassword(passwordEncoder.encode("parola"));
-                user.setRole("USER");
+                user.setUsername("administrator");
+                user.setPassword(passwordEncoder.encode("parola administrator"));
+                user.setRole("ADMIN");
                 userRepository.save(user);
+            }
+            
+            if(userRepository.findByUsername("utilizator").isEmpty()) {
+            	UserEntity user = new UserEntity();
+            	user.setUsername("utilizator");
+            	user.setPassword(passwordEncoder.encode("parola utilizator"));
+            	user.setRole("USER");
+            	userRepository.save(user);
             }
         };
     }

@@ -87,6 +87,13 @@
                                     th:attr="data-id=${route.id}">
                                 Șterge linia
                             </button>
+							<button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" 
+									onclick="removeRoute(this)" 
+									th:data-route-nr="${stat.index + 1}" 
+									th:attr="data-id=${route.id}"
+									sec:authorize="hasRole('ROLE_ADMIN')">
+								Șterge
+							</button>
                         </div>
                     </li>
                 </ul>
@@ -99,7 +106,12 @@
     </div>
 </div>
 
-<!--/* <button type="button" class="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-1 focus:ring-red-200 focus:ring-offset-1" onclick="removeRoute(this)" th:attr="data-id=${route.id}">Șterge</button> */-->
+
+<script th:inline="javascript">
+    /*<![CDATA[*/ 
+    const isAdmin = /*[[${#authorization.expression('hasRole(''ROLE_ADMIN'')')}]]*/ false; 
+    /*]]>*/
+</script>
 <script defer>
 	
 	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
@@ -152,8 +164,10 @@
 			    	Object.keys(sectorDrawings).forEach(id => {
 			    		const routeNr = sectorDrawings[id].bubble.number;
 			    		redrawRoute(canvas, ctx, sectorDrawings, id);
-			    		document.querySelector(`.delete-drawing-btn[data-route-nr='${routeNr}']`).classList.remove('hidden');
-			            document.querySelector(`.drawing-toggle-btn[data-route-nr='${routeNr}']`).classList.add('hidden'); 
+			    		if(isAdmin) {
+			    			document.querySelector(`.delete-drawing-btn[data-route-nr='${routeNr}']`).classList.remove('hidden');
+			    		}
+			            document.querySelector(`.drawing-toggle-btn[data-route-nr='${routeNr}']`).classList.add('hidden'); 			    			
 			            updateRouteItemCursor(id);
 			    	});
 	    		} else {
@@ -442,7 +456,9 @@
 	        document.querySelectorAll('.delete-drawing-btn').forEach((btn) => {
 	            btn.removeAttribute("disabled");
 	        });
-	        document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.remove('hidden');
+	        if(isAdmin) {
+		        document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.remove('hidden');
+	        }
 	        saveRouteDrawings(sectorDrawings);
 	        showNotification(`Linia traseului ${routeNr} a fost salvată`);
 	    } else {
@@ -512,8 +528,11 @@
 	
 	function removeRoute(button) {
 	    const routeId = button.dataset.id;
+	    const dataRouteNr = button.dataset.routeNr;
+	    
+	    handleDeleteRouteDrawing(routeId, dataRouteNr);
 
-	    fetch('/remove-route', {
+	 	 fetch('/remove-route', {
 	        method: 'POST',
 	        headers: {
 	            'Content-Type': 'application/x-www-form-urlencoded',
