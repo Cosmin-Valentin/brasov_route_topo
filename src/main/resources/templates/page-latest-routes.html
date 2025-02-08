@@ -27,41 +27,43 @@
             <p th:text="'Avem un total de ' + ${routes.size} + ' rute adăugate până în prezent'" class="mt-2 text-lg text-gray-600"></p>
         </div>
         <ul role="list" class="divide-y divide-gray-200">
-            <li class="flex flex-wrap gap-y-4 items-center justify-between py-6 sm:flex-nowrap" th:each="route : ${routes}">
-                <div class="flex-1 min-w-0">
-                    <p class="text-lg font-medium text-gray-900" th:text="${route.getName}"></p>
-                    <p class="mt-2 text-sm text-gray-500">
-                        <span th:text="'Frumusețe: '"></span>
-                        <span class="text-yellow-400" th:each="i : ${#numbers.sequence(1, route.getRating)}">★</span>
-                        <span class="hidden sm:inline-block ml-2 text-gray-500" th:text="'(' + ${route.getRating} + ' stele)'"></span>
-                    </p>
-                </div>
-                <div class="flex-1 min-w-0 mt-4 sm:mt-0">
-                    <p class="text-sm text-gray-600">
-                        <span class="font-medium text-gray-900">Lungime:</span>
-                        <span th:text="${route.getLength} + ' metri'"></span>
-                    </p>
-                    <p class="mt-1 text-sm text-gray-600">
-                        <span class="font-medium text-gray-900">Număr bucle:</span>
-                        <span th:text="${route.getQuickDraws}"></span>
-                    </p>
-                </div>
-                <div class="flex-1 min-w-0 mt-4 sm:mt-0 text-right">
-                    <p class="text-sm text-gray-600">
-                        <span class="font-medium text-gray-900">Zonă:</span>
-                        <span th:text="${route.getSector.getZone.getName}"></span>
-                    </p>
-                    <p class="mt-1 text-sm text-gray-600">
-                        <span class="font-medium text-gray-900">Sector:</span>
-                        <span th:text="${route.getSector.getName}"></span>
-                    </p>
-                </div>
-                <!-- <div sec:authorize="isAuthenticated()" class="flex-none mt-4 sm:mt-0">
-                    <button type="button" class="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200" onclick="removeRoute(this)" th:attr="data-id=${route.id}">
-                        Șterge
-                    </button>
-                </div>  -->
-            </li>
+        	<a th:href="@{/areas/{areaId}/sectors/{sectorId}(areaId=${route.getSector.getZone.getId}, sectorId=${route.getSector.getId})}" class="no-underline group" th:each="route : ${routes}">
+	        	<li class="flex flex-wrap gap-y-4 items-center justify-between py-6 px-2 sm:flex-nowrap group-hover:bg-gray-100">
+	                <div class="flex-1 min-w-0">
+	                    <p class="text-lg font-medium text-gray-900" th:text="${route.getName}"></p>
+	                    <p class="mt-2 text-sm text-gray-500">
+	                        <span th:text="'Frumusețe: '"></span>
+	                        <span class="text-yellow-400" th:each="i : ${#numbers.sequence(1, route.getRating)}">★</span>
+	                        <span class="hidden sm:inline-block ml-2 text-gray-500" th:text="'(' + ${route.getRating} + ' stele)'"></span>
+	                    </p>
+	                </div>
+	                <div class="flex-1 min-w-0 mt-4 sm:mt-0">
+	                    <p class="text-sm text-gray-600">
+	                        <span class="font-medium text-gray-900">Lungime:</span>
+	                        <span th:text="${route.getLength} + ' metri'"></span>
+	                    </p>
+	                    <p class="mt-1 text-sm text-gray-600">
+	                        <span class="font-medium text-gray-900">Număr bucle:</span>
+	                        <span th:text="${route.getQuickDraws}"></span>
+	                    </p>
+	                </div>
+	                <div class="flex-1 min-w-0 mt-4 sm:mt-0 text-right">
+	                    <p class="text-sm text-gray-600">
+	                        <span class="font-medium text-gray-900">Zonă:</span>
+	                        <span th:text="${route.getSector.getZone.getName}"></span>
+	                    </p>
+	                    <p class="mt-1 text-sm text-gray-600">
+	                        <span class="font-medium text-gray-900">Sector:</span>
+	                        <span th:text="${route.getSector.getName}"></span>
+	                    </p>
+	                </div>
+	                <!-- <div sec:authorize="isAuthenticated()" class="flex-none mt-4 sm:mt-0">
+	                    <button type="button" class="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200" onclick="removeRoute(this)" th:attr="data-id=${route.id}">
+	                        Șterge
+	                    </button>
+	                </div>  -->
+	            </li>
+        	</a>
         </ul>
     </div>
 </div>
