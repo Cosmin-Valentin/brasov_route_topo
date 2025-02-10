@@ -163,6 +163,7 @@
 			    	sectorDrawings = decodedData;
 			    	Object.keys(sectorDrawings).forEach(id => {
 			    		const routeNr = sectorDrawings[id].bubble.number;
+			    		console.log('id:' + id + ' routeNr:' + routeNr);
 			    		redrawRoute(canvas, ctx, sectorDrawings, id);
 			    		if(isAdmin) {
 			    			document.querySelector(`.delete-drawing-btn[data-route-nr='${routeNr}']`).classList.remove('hidden');
@@ -420,19 +421,39 @@
 		window.toggleDrawing = handleToggleDrawing;
 	}
 	
-	function handleDeleteRouteDrawing(routeId, routeNr) {
+	function handleDeleteRouteDrawing(routeId, routeNr, deleteRoute = false) {
 	    if (sectorDrawings[routeId]) {
 	        delete sectorDrawings[routeId];
 	        drawnRoutes[routeId] = false;
+	        
+	        if(deleteRoute) {
+	        	for (const routeId in sectorDrawings) {
+	                if (sectorDrawings.hasOwnProperty(routeId)) {
+	                    const route = sectorDrawings[routeId];
+	                    if (route.bubble.number > routeNr) {
+	                        route.bubble.number--;
+	                    }
+	                }
+	            }
+	        	const buttons = document.querySelectorAll('.drawing-toggle-btn, .delete-drawing-btn');
+	            buttons.forEach(button => {
+	                const routeNum = parseInt(button.dataset.routeNr);
+	                if (routeNum > routeNr) {
+	                    button.dataset.routeNr = routeNum - 1;
+	                }
+	            });
+	        }
+	        
 	        redrawAllRoutes();
 	        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	        Object.keys(sectorDrawings).forEach(id => redrawRoute(canvas, ctx, sectorDrawings, id));
+			
+		    Object.keys(sectorDrawings).forEach(id => redrawRoute(canvas, ctx, sectorDrawings, id));
+		    
 	        document.querySelector(`.delete-drawing-btn[data-id='${routeId}']`).classList.add('hidden');
 	        document.querySelector(`.drawing-toggle-btn[data-id='${routeId}']`).classList.remove('hidden');
 	        showNotification(`Linia traseului ${routeNr} a fost ștearsă`);
-	        saveRouteDrawings(sectorDrawings);
 	        
+	        saveRouteDrawings(sectorDrawings);
 	        updateRouteItemCursor(routeId);
 	    }
 	}
@@ -527,33 +548,35 @@
 	}
 	
 	function removeRoute(button) {
-	    const routeId = button.dataset.id;
-	    const dataRouteNr = button.dataset.routeNr;
-	    
-	    handleDeleteRouteDrawing(routeId, dataRouteNr);
+	    if(confirm("Ești sigur că vrei să ștergi ruta?")) {
+	    	const routeId = button.dataset.id;
+		    const dataRouteNr = button.dataset.routeNr;
+		    
+		    handleDeleteRouteDrawing(routeId, dataRouteNr, true);
 
-	 	 fetch('/remove-route', {
-	        method: 'POST',
-	        headers: {
-	            'Content-Type': 'application/x-www-form-urlencoded',
-	            [csrfHeader]: csrfToken
-	        },
-	        body: new URLSearchParams({ id: routeId })
-	    })
-	    .then(response => {
-	        if (response.ok) {
-	            const routeItem = button.closest('li');
-	            if (routeItem) {
-	                routeItem.remove();
-	            }
-	        } else {
-	        	showNotification('Failed to delete the route. Please try again.');
-	        }
-	    })
-	    .catch(error => {
-	        console.error('Error deleting route:', error);
-	        showNotification('An error occurred while deleting the route.');
-	    });
+		 	fetch('/remove-route', {
+		        method: 'POST',
+		        headers: {
+		            'Content-Type': 'application/x-www-form-urlencoded',
+		            [csrfHeader]: csrfToken
+		        },
+		        body: new URLSearchParams({ id: routeId })
+		    })
+		    .then(response => {
+		        if (response.ok) {
+		            const routeItem = button.closest('li');
+		            if (routeItem) {
+		                routeItem.remove();
+		            }
+		        } else {
+		        	showNotification('Failed to delete the route. Please try again.');
+		        }
+		    })
+		    .catch(error => {
+		        console.error('Error deleting route:', error);
+		        showNotification('An error occurred while deleting the route.');
+		    });
+	    }
 	}
 	
 	function decodeDrawingData(data) {
