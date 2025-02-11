@@ -17,7 +17,7 @@ public class SecurityConfig {
             .securityMatcher("/**")
             .authorizeHttpRequests(authorize -> {
                 authorize
-                    .requestMatchers("/", "/login", "/logout").permitAll()  
+                    .requestMatchers("/", "/login", "/logout", "/register").permitAll()  
                     .requestMatchers("/add-route").authenticated() 
                     .anyRequest().permitAll(); 
             })
