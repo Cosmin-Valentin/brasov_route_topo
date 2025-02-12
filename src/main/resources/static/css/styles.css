@@ -231,14 +231,6 @@ body.dark .text-gray-300 {
     color: #6b7280;
 }
 
-body.dark #notification {
-    background-color: #374151; 
-}
-
-body.dark #notification-message {
-    color: #e2e8f0; 
-}
-
 body.dark select {
     -webkit-appearance: none;
     -moz-appearance: none;
