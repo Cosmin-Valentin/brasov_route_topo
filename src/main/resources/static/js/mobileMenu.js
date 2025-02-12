@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+export function initializeMobileMenu() {
 	const mobileMenuButton = document.getElementById('mobile-menu-button');
 	const mobileMenu = document.getElementById('mobile-menu');
 	const mobileMenuClose = document.getElementById('close-menu');
@@ -16,4 +16,4 @@ document.addEventListener('DOMContentLoaded', function() {
 	mobileMenuClose.addEventListener('click', function() {
 		document.getElementById('mobile-menu').classList.add('hidden');
 	});
-});
+}

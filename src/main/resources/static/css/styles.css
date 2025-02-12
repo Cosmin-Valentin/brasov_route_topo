@@ -1,3 +1,255 @@
+body.dark {
+    background-color: #1f2937; 
+    color: #e2e8f0; 
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6 {
+    color: #f9f9f9;
+}
+
+body.dark p,
+body.dark span,
+body.dark li,
+body.dark label,
+body.dark a,
+body.dark select,
+body.dark input,
+body.dark textarea,
+body.dark option {
+    color: #d1d5db;
+}
+
+body.dark .bg-gray-100 {
+    background-color: #374151; 
+}
+
+body.dark .bg-gray-50 {
+    background-color: #28303f; 
+}
+
+body.dark .border-gray-200 {
+    border-color: #4b5563; 
+}
+
+body.dark .shadow-md {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06); 
+}
+
+body.dark .hover\:shadow-lg:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+}
+
+body.dark .bg-slate-100 {
+    background-color: #334155; 
+}
+
+body.dark .text-gray-800 {
+    color: #e2e8f0; 
+}
+
+body.dark .text-gray-600 {
+    color: #9ca3af; 
+}
+
+body.dark .hover\:bg-gray-100:hover {
+    background-color: #4b5563; 
+}
+
+body.dark .bg-gray-200 {
+    background-color: #4b5563; 
+}
+
+body.dark .hover\:bg-gray-50:hover {
+    background-color: #6b7280; 
+}
+
+body.dark select,
+body.dark input {
+    background-color: #4b5563; 
+    border-color: #6b7280; 
+    color: #e2e8f0; 
+}
+
+body.dark option {
+    background-color: #374151; 
+    color: #e2e8f0; 
+}
+
+body.dark .ring-gray-300 {
+    --tw-ring-color: #6b7280; 
+}
+
+body.dark .focus\:ring-indigo-600:focus {
+    --tw-ring-color: #818cf8; 
+}
+
+body.dark .text-red-500 {
+    color: #f87171; 
+}
+
+body.dark .bg-red-50 {
+    background-color: #ef444420; 
+    border-color: #f87171; 
+}
+
+body.dark .border-red-400 {
+    border-color: #f87171; 
+}
+
+body.dark .text-red-700 {
+    color: #fca5a5;
+}
+
+body.dark .breadcrumb { 
+    color: #d1d5db; 
+}
+
+body.dark .breadcrumb a {
+    color: #9ca3af; 
+}
+
+body.dark .breadcrumb a:hover {
+    color: #e5e7eb; 
+}
+
+
+body.dark .bg-white {
+    background-color: #28303f; 
+}
+
+body.dark .text-gray-900 {
+    color: #e2e8f0; 
+}
+
+body.dark .text-gray-500 {
+    color: #9ca3af; 
+}
+
+body.dark #sector-image {
+    filter: brightness(0.9); 
+}
+
+body.dark .text-4xl.font-semibold { 
+    color: #e2e8f0;
+}
+
+body.dark .text-pretty {
+    color: #e2e8f0;
+}
+
+body.dark .text-lg.text-gray-600 { 
+    color: #9ca3af;
+}
+
+body.dark .border-t.border-gray-200 {
+    border-top-color: #4b5563; 
+}
+
+body.dark ul.divide-y.divide-gray-200 {
+    border-color: #4b5563; 
+}
+
+body.dark li.flex:not(.breadcrumbs li.flex) {
+    background-color: #374151; 
+}
+
+body.dark li.flex:not(.breadcrumbs li.flex):hover {
+    background-color: #4b5563; 
+}
+
+body.dark .text-black.font-medium.bg-gray-200 {
+    background-color: #4b5563; 
+    color: #e2e8f0; 
+}
+
+body.dark .text-gray-900.m-0 { 
+    color: #e2e8f0;
+}
+
+body.dark .text-gray-500.ml-2 { 
+    color: #9ca3af;
+}
+
+body.dark .text-gray-600.mt-1 { 
+    color: #9ca3af;
+}
+
+body.dark .text-sm.m-0.text-gray-600 { 
+    color: #9ca3af;
+}
+
+body.dark .text-orange-600 {
+    color: #f97316;
+}
+
+body.dark .bg-orange-50 {
+    background-color: #f9731620;
+}
+
+body.dark .hover\:bg-orange-100:hover {
+    background-color: #f9731640;
+}
+
+body.dark .text-red-600 {
+    color: #dc2626;
+}
+
+body.dark .bg-red-50 {
+    background-color: #dc262620;
+}
+
+body.dark .hover\:bg-red-100:hover {
+    background-color: #dc262640;
+}
+
+body.dark .bg-green-50 {
+    background-color: #22c55e20;
+}
+
+body.dark .text-green-600 {
+    color: #22c55e;
+}
+
+body.dark .hover\:bg-green-100:hover {
+    background-color: #22c55e40;
+}
+
+body.dark .bg-opacity-50 {
+    background-color: rgba(0, 0, 0, 0.5); 
+}
+
+body.dark .text-white {
+    color: #e2e8f0; 
+}
+
+body.dark .text-gray-300 {
+    color: #6b7280;
+}
+
+body.dark #notification {
+    background-color: #374151; 
+}
+
+body.dark #notification-message {
+    color: #e2e8f0; 
+}
+
+body.dark select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24h-24z' fill='none'/></svg>"); /* Add your custom SVG here */
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.5em 1.5em; 
+    padding-right: 2rem;
+}
+
 #mobile-menu {
     background-color: rgba(255, 255, 255, 0.95);
     z-index: 50;

@@ -25,7 +25,6 @@ public class RegistrationController {
 	
 	@PostMapping("/register")
 	public String registerUser(@RequestParam String username, @RequestParam String password, Model model) {
-		System.out.println(1);
 		try {
 			userService.registerUser(username, password);
 			return "redirect:/login";
