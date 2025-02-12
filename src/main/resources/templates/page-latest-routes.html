@@ -26,9 +26,9 @@
             </h2>
             <p th:text="'Avem un total de ' + ${routes.size} + ' rute adăugate până în prezent'" class="mt-2 text-lg text-gray-600"></p>
         </div>
-        <ul role="list" class="divide-y divide-gray-200">
-        	<a th:href="@{/areas/{areaId}/sectors/{sectorId}(areaId=${route.getSector.getZone.getId}, sectorId=${route.getSector.getId})}" class="no-underline group" th:each="route : ${routes}">
-	        	<li class="flex flex-wrap gap-y-4 items-center justify-between py-6 px-2 sm:flex-nowrap group-hover:bg-gray-100">
+        <ul role="list" class="divide-y divide-gray-200 rounded-lg overflow-hidden border border-gray-200 shadow">
+        	<a th:href="@{/areas/{areaId}/sectors/{sectorId}(areaId=${route.getSector.getZone.getId}, sectorId=${route.getSector.getId})}" class="no-underline group block" th:each="route : ${routes}">
+	        	<li class="flex flex-wrap gap-y-4 items-center justify-between py-6 px-4 sm:flex-nowrap group-hover:bg-gray-100 transition duration-300 ease-in-out">
 	                <div class="flex-1 min-w-0">
 	                    <p class="text-lg font-medium text-gray-900" th:text="${route.getName}"></p>
 	                    <p class="mt-2 text-sm text-gray-500">
@@ -57,11 +57,6 @@
 	                        <span th:text="${route.getSector.getName}"></span>
 	                    </p>
 	                </div>
-	                <!-- <div sec:authorize="isAuthenticated()" class="flex-none mt-4 sm:mt-0">
-	                    <button type="button" class="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded shadow-sm hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200" onclick="removeRoute(this)" th:attr="data-id=${route.id}">
-	                        Șterge
-	                    </button>
-	                </div>  -->
 	            </li>
         	</a>
         </ul>
