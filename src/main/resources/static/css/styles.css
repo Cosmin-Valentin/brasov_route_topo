@@ -242,6 +242,37 @@ body.dark select {
     padding-right: 2rem;
 }
 
+body.dark #mobile-menu {
+    background-color: #1f2937;
+}
+
+body.dark #mobile-menu button#close-menu {
+    color: #e2e8f0; 
+}
+
+body.dark #mobile-menu a {
+    color: #e2e8f0; 
+}
+
+body.dark #mobile-menu a:hover {
+    background-color: #374151; 
+    color: #f9f9f9; 
+}
+
+body.dark #mobile-menu a.inline-block { 
+    background-color: #374151; 
+    color: #e2e8f0; 
+}
+
+body.dark #mobile-menu a.inline-block:hover {
+    background-color: #4b5563; 
+    color: #f9f9f9;
+}
+
+body.dark #mobile-menu {
+    border: 1px solid #374151;
+}
+
 #mobile-menu {
     background-color: rgba(255, 255, 255, 0.95);
     z-index: 50;
